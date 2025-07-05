@@ -9,6 +9,12 @@ import NowPlayingView from '@/components/NowPlayingView';
 
 type RepeatMode = 'none' | 'one' | 'all';
 
+// Definisikan tipe untuk event dari YouTube Player
+interface YouTubePlayerEvent {
+  target: any; // Biarkan any untuk target agar tidak rumit
+  data: number;
+}
+
 interface PlayerContextType {
   activeTrack: Track | null;
   isPlaying: boolean;
@@ -39,15 +45,17 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
   const [queue, setQueue] = useState<Track[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [repeatMode, setRepeatMode] = useState<RepeatMode>('none');
-  const [isNowPlayingViewOpen, setNowPlayingViewOpen] = useState(false); // State baru
+  const [isNowPlayingViewOpen, setNowPlayingViewOpen] = useState(false);
 
-  const playerRef = useRef<any>(null);
+  const playerRef = useRef<any>(null); // Ref untuk YouTube Player instance
   const intervalRef = useRef<number | null>(null);
 
   const startTimer = () => {
     if (intervalRef.current) clearInterval(intervalRef.current);
     intervalRef.current = window.setInterval(() => {
-      setProgress(playerRef.current?.getCurrentTime() || 0);
+      if (playerRef.current) {
+        setProgress(playerRef.current.getCurrentTime() || 0);
+      }
     }, 1000);
   };
 
@@ -55,7 +63,11 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
     if (intervalRef.current) clearInterval(intervalRef.current);
   };
   
-  useEffect(() => () => stopTimer(), []);
+  useEffect(() => {
+    return () => {
+        stopTimer();
+    };
+  }, []);
 
   const loadAndPlaySong = async (track: Track) => {
     setIsLoading(true);
@@ -111,13 +123,25 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const toggleRepeatMode = () => setRepeatMode(prev => prev === 'none' ? 'all' : prev === 'all' ? 'one' : 'none');
-  const togglePlayPause = () => isPlaying ? playerRef.current?.pauseVideo() : playerRef.current?.playVideo();
-  const seek = (time: number) => playerRef.current?.seekTo(time, true);
+  const togglePlayPause = () => {
+    if(isPlaying) {
+      playerRef.current?.pauseVideo();
+    } else {
+      playerRef.current?.playVideo();
+    }
+  };
+  const seek = (time: number) => {
+    if(playerRef.current) {
+      playerRef.current.seekTo(time, true);
+    }
+  };
   const openNowPlayingView = () => setNowPlayingViewOpen(true);
   const closeNowPlayingView = () => setNowPlayingViewOpen(false);
 
-  const onPlayerReady = (event: any) => playerRef.current = event.target;
-  const onPlayerStateChange = (event: any) => {
+  const onPlayerReady = (event: YouTubePlayerEvent) => {
+    playerRef.current = event.target;
+  };
+  const onPlayerStateChange = (event: YouTubePlayerEvent) => {
     if (event.data === 1) { // Playing
       setIsPlaying(true);
       setDuration(playerRef.current.getDuration());
@@ -126,11 +150,15 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
       setIsPlaying(false);
       stopTimer();
     } else if (event.data === 0) { // Ended
-      repeatMode === 'one' ? playerRef.current.seekTo(0) : playNext();
+      if (repeatMode === 'one') {
+        playerRef.current.seekTo(0);
+      } else {
+        playNext();
+      }
     }
   };
 
-  const onPlayerError = (event: any) => {
+  const onPlayerError = (event: YouTubePlayerEvent) => {
     console.error("YouTube Player Error:", event.data);
     setIsPlaying(false);
     stopTimer();

@@ -1,7 +1,7 @@
 // app/search/page.tsx
 "use client";
 
-import { useState, FormEvent, useEffect } from 'react';
+import { useState, FormEvent } from 'react'; // Hapus useEffect yang tidak digunakan
 import { Search } from 'lucide-react';
 import { Track } from '@/types';
 import { usePlayer } from '@/app/context/PlayerContext';
@@ -67,7 +67,8 @@ export default function SearchPage() {
               ))}
             </div>
           ) : (
-            <p className="text-zinc-400 text-center py-10">Tidak ada hasil ditemukan untuk "{query}".</p>
+            // Perbaiki kutip dua di sini
+            <p className="text-zinc-400 text-center py-10">Tidak ada hasil ditemukan untuk &quot;{query}&quot;.</p>
           )
         ) : (
             <p className="text-zinc-400 text-center py-10">Cari lagu favoritmu.</p>

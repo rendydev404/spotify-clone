@@ -1,7 +1,6 @@
 // app/layout.tsx
 "use client"; // Tambahkan ini karena kita akan menggunakan state
 
-import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Sidebar from "@/components/Sidebar";

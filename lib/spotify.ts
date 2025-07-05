@@ -1,13 +1,5 @@
 // File: lib/spotify.ts
 
-const client_id = process.env.SPOTIFY_CLIENT_ID;
-const client_secret = process.env.SPOTIFY_CLIENT_SECRET;
-const basic = Buffer.from(`${client_id}:${client_secret}`).toString("base64");
-
-// PASTIKAN DUA BARIS INI MENGGUNAKAN URL SPOTIFY ASLI
-const TOKEN_ENDPOINT = `https://accounts.spotify.com/api/token`;
-const API_BASE_URL = 'https://api.spotify.com/';
-
 export async function getAccessToken() {
   const CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
   const CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
