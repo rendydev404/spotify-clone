@@ -1,51 +1,79 @@
-// Tambahkan ini di baris paling atas!
+// app/playlist/page.tsx
 "use client";
 
 import { useEffect, useState } from "react";
 import { Track } from "@/types";
-import Link from "next/link";
-import TrackCard from "@/components/TrackCard";
+import { usePlayer } from "@/app/context/PlayerContext";
+import { Pencil } from "lucide-react";
+import PlaylistTrackItem from "@/components/PlaylistTrackItem"; // Impor komponen baru
 
 export default function PlaylistPage() {
   const [playlist, setPlaylist] = useState<Track[]>([]);
+  const [playlistName, setPlaylistName] = useState("Playlist Saya");
+  const [isEditing, setIsEditing] = useState(false);
+  const { playSong } = usePlayer();
 
-  // useEffect akan berjalan saat komponen dimuat di browser
+  // Muat data dari localStorage saat komponen pertama kali dirender
   useEffect(() => {
     const savedPlaylist: Track[] = JSON.parse(localStorage.getItem('my-playlist') || '[]');
+    const savedName = localStorage.getItem('my-playlist-name') || "Playlist Saya";
     setPlaylist(savedPlaylist);
+    setPlaylistName(savedName);
   }, []);
 
-  const handleRemoveFromPlaylist = (trackId: string) => {
-    const newPlaylist = playlist.filter(track => track.id !== trackId);
-    setPlaylist(newPlaylist);
-    localStorage.setItem('my-playlist', JSON.stringify(newPlaylist));
-    alert("Lagu dihapus dari playlist.");
+  // Fungsi untuk mengubah nama playlist
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPlaylistName(e.target.value);
   };
 
+  // Fungsi untuk menyimpan nama playlist baru
+  const saveName = () => {
+    localStorage.setItem('my-playlist-name', playlistName);
+    setIsEditing(false);
+  };
+
+  // Fungsi untuk menghapus lagu dari playlist
+  const handleRemoveFromPlaylist = (trackIdToRemove: string) => {
+    const newPlaylist = playlist.filter(track => track.id !== trackIdToRemove);
+    setPlaylist(newPlaylist); // Update state lokal agar UI langsung berubah
+    localStorage.setItem('my-playlist', JSON.stringify(newPlaylist)); // Simpan ke localStorage
+  };
+  
   return (
     <main className="bg-zinc-900 text-white min-h-screen p-4 md:p-8">
-      <h1 className="text-3xl font-bold text-white mb-8">
-        Playlist Saya
-      </h1>
+      <div className="flex items-center gap-4 mb-8">
+        {isEditing ? (
+          <input 
+            type="text" 
+            value={playlistName}
+            onChange={handleNameChange}
+            onBlur={saveName}
+            onKeyDown={(e) => e.key === 'Enter' && saveName()}
+            className="text-3xl font-bold text-white bg-transparent border-b-2 border-primary focus:outline-none"
+            autoFocus
+          />
+        ) : (
+          <h1 className="text-3xl font-bold text-white">{playlistName}</h1>
+        )}
+        <button onClick={() => setIsEditing(!isEditing)} className="text-zinc-400 hover:text-white"><Pencil size={20} /></button>
+      </div>
+
       {playlist.length > 0 ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
-          {playlist.map((track) => (
-            <div key={track.id} className="relative group">
-              <Link href={`/track/${track.id}`}>
-                <TrackCard track={track} />
-              </Link>
-              <button
-                onClick={() => handleRemoveFromPlaylist(track.id)}
-                className="absolute top-2 right-2 bg-red-600 text-white rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                aria-label="Remove from playlist"
-              >
-                X
-              </button>
-            </div>
+        // Gunakan komponen baru di sini
+        <div className="space-y-2">
+          {playlist.map((track, index) => (
+            <PlaylistTrackItem
+              key={`${track.id}-${index}`}
+              track={track}
+              onPlay={() => playSong(track, playlist, index)}
+              onRemove={() => handleRemoveFromPlaylist(track.id)}
+            />
           ))}
         </div>
       ) : (
-        <p className="text-zinc-400">Playlist Anda masih kosong.</p>
+        <p className="text-zinc-400 text-center py-10">
+          Playlist Anda masih kosong. Tambahkan lagu favoritmu!
+        </p>
       )}
     </main>
   );
