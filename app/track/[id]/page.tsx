@@ -1,16 +1,16 @@
 // app/track/[id]/page.tsx
+
 import { fetchSpotifyAPI } from "@/lib/spotify";
 import { Track } from "@/types";
 import TrackDetailsClient from "@/components/TrackDetailsClient";
 
-// Definisikan tipe untuk props halaman ini
+// Tipe props, cocokkan dengan Next.js PageProps
 type Props = {
-  params: {
-    id: string;
-  };
-};
+  params: { id: string }
+}
 
-// Fungsi untuk mengambil detail satu lagu berdasarkan ID-nya
+
+// Fungsi untuk ambil detail satu lagu berdasarkan ID
 async function getTrackDetails(id: string): Promise<Track | null> {
   try {
     const track = await fetchSpotifyAPI(`v1/tracks/${id}`);
@@ -21,7 +21,7 @@ async function getTrackDetails(id: string): Promise<Track | null> {
   }
 }
 
-// Gunakan tipe 'Props' yang sudah kita definisikan
+// `async` Page component TIDAK MASALAH di App Router, asal props benar
 export default async function TrackDetailPage({ params }: Props) {
   const track = await getTrackDetails(params.id);
 
