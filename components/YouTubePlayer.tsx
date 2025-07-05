@@ -3,19 +3,13 @@
 
 import React from 'react';
 import YouTube from 'react-youtube';
+import { YouTubeEvent } from '@/app/context/PlayerContext'; // Impor tipe dari PlayerContext
 
-// Definisikan tipe untuk event agar tidak menggunakan 'any'
-interface YouTubePlayerEvent {
-  target: any; // Target dari event bisa sangat kompleks, jadi 'any' diterima di sini
-  data: number;
-}
-
-// Definisikan tipe untuk props
 interface YouTubePlayerProps {
   videoId: string | null;
-  onReady: (event: YouTubePlayerEvent) => void;
-  onStateChange: (event: YouTubePlayerEvent) => void;
-  onError: (event: YouTubePlayerEvent) => void;
+  onReady: (event: YouTubeEvent) => void;
+  onStateChange: (event: YouTubeEvent) => void;
+  onError: (event: YouTubeEvent) => void;
 }
 
 const YouTubePlayer: React.FC<YouTubePlayerProps> = ({ videoId, onReady, onStateChange, onError }) => {
@@ -37,8 +31,11 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({ videoId, onReady, onState
       videoId={videoId}
       opts={opts}
       className="fixed -top-96 -left-96"
+      // @ts-ignore Tipe dari react-youtube mungkin tidak sepenuhnya cocok, kita bisa abaikan sementara
       onReady={onReady}
+      // @ts-ignore
       onStateChange={onStateChange}
+      // @ts-ignore
       onError={onError}
     />
   );

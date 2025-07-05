@@ -1,5 +1,5 @@
 // app/layout.tsx
-"use client"; // Tambahkan ini karena kita akan menggunakan state
+"use client";
 
 import { Inter } from "next/font/google";
 import "./globals.css";
@@ -7,12 +7,9 @@ import Sidebar from "@/components/Sidebar";
 import { PlayerProvider } from "@/app/context/PlayerContext";
 import GlobalPlayer from "@/components/GlobalPlayer";
 import SplashScreen from "@/components/SplashScreen";
-import { useState, useEffect } from "react";
+import { useState } from "react"; // Hanya import yang digunakan
 
 const inter = Inter({ subsets: ["latin"] });
-
-// Metadata tidak bisa digunakan di client component, jadi kita pindahkan atau hapus
-// export const metadata: Metadata = { ... };
 
 export default function RootLayout({
   children,
