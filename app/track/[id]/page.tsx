@@ -1,6 +1,14 @@
+// app/track/[id]/page.tsx
 import { fetchSpotifyAPI } from "@/lib/spotify";
 import { Track } from "@/types";
-import TrackDetailsClient from "@/components/TrackDetailsClient"; // Kita impor komponen client
+import TrackDetailsClient from "@/components/TrackDetailsClient";
+
+// Definisikan tipe untuk props halaman ini
+type Props = {
+  params: {
+    id: string;
+  };
+};
 
 // Fungsi untuk mengambil detail satu lagu berdasarkan ID-nya
 async function getTrackDetails(id: string): Promise<Track | null> {
@@ -13,14 +21,10 @@ async function getTrackDetails(id: string): Promise<Track | null> {
   }
 }
 
-// Ini adalah Halaman Server.
-export default async function TrackDetailPage({ params }: { params: { id: string } }) {
+// Gunakan tipe 'Props' yang sudah kita definisikan
+export default async function TrackDetailPage({ params }: Props) {
   const track = await getTrackDetails(params.id);
 
-  // Tambahkan console.log di sini untuk melihat data asli dari Spotify
-  console.log("Data Detail Lagu Diterima:", JSON.stringify(track, null, 2));
-
-  // Jika lagu tidak ditemukan, tampilkan pesan error
   if (!track) {
     return (
       <main className="bg-zinc-900 text-white min-h-screen flex items-center justify-center">
@@ -31,6 +35,5 @@ export default async function TrackDetailPage({ params }: { params: { id: string
     );
   }
 
-  // Jika data berhasil didapat, kita lempar ke Komponen Client untuk ditampilkan
   return <TrackDetailsClient track={track} />;
 }
