@@ -1,6 +1,6 @@
 import { fetchSpotifyAPI } from "@/lib/spotify";
 import { Track } from "@/types";
-import TrackDetailsClient from "@/components/TrackCard"; // Kita impor komponen client
+import TrackDetailsClient from "@/components/TrackDetailsClient"; // Kita impor komponen client
 
 // Fungsi untuk mengambil detail satu lagu berdasarkan ID-nya
 async function getTrackDetails(id: string): Promise<Track | null> {
