@@ -9,27 +9,6 @@ import NowPlayingView from '@/components/NowPlayingView';
 
 type RepeatMode = 'none' | 'one' | 'all';
 
-// Tipe spesifik untuk event dari YouTube, menggantikan 'any'
-export interface YouTubeEvent {
-  target: {
-    getCurrentTime: () => number;
-    getDuration: () => number;
-    pauseVideo: () => void;
-    playVideo: () => void;
-    seekTo: (time: number, allowSeekAhead?: boolean) => void;
-  };
-  data: number;
-}
-
-// Tipe spesifik untuk instance player, menggantikan 'any'
-interface PlayerInstance {
-  getCurrentTime: () => number;
-  getDuration: () => number;
-  pauseVideo: () => void;
-  playVideo: () => void;
-  seekTo: (time: number, allowSeekAhead?: boolean) => void;
-}
-
 interface PlayerContextType {
   activeTrack: Track | null;
   isPlaying: boolean;
@@ -62,7 +41,7 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
   const [repeatMode, setRepeatMode] = useState<RepeatMode>('none');
   const [isNowPlayingViewOpen, setNowPlayingViewOpen] = useState(false);
 
-  const playerRef = useRef<PlayerInstance | null>(null);
+  const playerRef = useRef<any>(null); // Kembali ke any untuk simplisitas
   const intervalRef = useRef<number | null>(null);
 
   const startTimer = () => {
@@ -141,11 +120,11 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
   const openNowPlayingView = () => setNowPlayingViewOpen(true);
   const closeNowPlayingView = () => setNowPlayingViewOpen(false);
 
-  const onPlayerReady = (event: YouTubeEvent) => {
+  const onPlayerReady = (event: any) => {
     playerRef.current = event.target;
   };
 
-  const onPlayerStateChange = (event: YouTubeEvent) => {
+  const onPlayerStateChange = (event: any) => {
     if (event.data === 1) { // Playing
       setIsPlaying(true);
       if (playerRef.current) setDuration(playerRef.current.getDuration());
@@ -159,7 +138,7 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const onPlayerError = (event: YouTubeEvent) => {
+  const onPlayerError = (event: any) => {
     console.error("YouTube Player Error:", event.data);
     setIsPlaying(false);
     stopTimer();

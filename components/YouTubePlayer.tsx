@@ -3,13 +3,13 @@
 
 import React from 'react';
 import YouTube from 'react-youtube';
-import { YouTubeEvent } from '@/app/context/PlayerContext'; // Impor tipe dari PlayerContext
 
+// Kita bisa kembalikan ke 'any' karena aturannya sudah dimatikan
 interface YouTubePlayerProps {
   videoId: string | null;
-  onReady: (event: YouTubeEvent) => void;
-  onStateChange: (event: YouTubeEvent) => void;
-  onError: (event: YouTubeEvent) => void;
+  onReady: (event: any) => void;
+  onStateChange: (event: any) => void;
+  onError: (event: any) => void;
 }
 
 const YouTubePlayer: React.FC<YouTubePlayerProps> = ({ videoId, onReady, onStateChange, onError }) => {
@@ -31,11 +31,8 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({ videoId, onReady, onState
       videoId={videoId}
       opts={opts}
       className="fixed -top-96 -left-96"
-      // @ts-ignore Tipe dari react-youtube mungkin tidak sepenuhnya cocok, kita bisa abaikan sementara
       onReady={onReady}
-      // @ts-ignore
       onStateChange={onStateChange}
-      // @ts-ignore
       onError={onError}
     />
   );
