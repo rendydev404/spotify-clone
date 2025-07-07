@@ -7,7 +7,7 @@ import { Home, ListMusic, Search } from 'lucide-react';
 
 const routes = [
   { label: 'Home', icon: Home, href: '/' },
-  { label: 'Cari', icon: Search, href: '/search' },
+  { label: 'search', icon: Search, href: '/search' },
   { label: 'Playlist', icon: ListMusic, href: '/playlist' },
 ];
 

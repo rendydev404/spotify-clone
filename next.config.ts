@@ -2,14 +2,11 @@
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // TAMBAHKAN BLOK INI
   typescript: {
-    // Memberitahu Next.js untuk TIDAK menggagalkan build jika ada error TypeScript.
-    // Ini adalah langkah aman dan solusi final untuk masalah Anda.
+    // Kita tetap biarkan ini untuk mengabaikan error tipe saat build
     ignoreBuildErrors: true,
   },
   
-  // Konfigurasi gambar yang sudah ada
   images: {
     remotePatterns: [
       {
