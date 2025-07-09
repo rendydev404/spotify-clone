@@ -3,7 +3,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   typescript: {
-    // Kita tetap biarkan ini untuk mengabaikan error tipe saat build
+    // Kita tetap biarkan ini untuk mengabaikan error tipe minor
     ignoreBuildErrors: true,
   },
   

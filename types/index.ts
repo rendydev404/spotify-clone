@@ -5,6 +5,7 @@ export interface SpotifyImage {
 }
 
 export interface Artist {
+   id: string;
   name: string;
 }
 

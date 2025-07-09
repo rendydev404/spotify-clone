@@ -7,7 +7,8 @@ import Sidebar from "@/components/Sidebar";
 import { PlayerProvider } from "@/app/context/PlayerContext";
 import GlobalPlayer from "@/components/GlobalPlayer";
 import SplashScreen from "@/components/SplashScreen";
-import { useState } from "react"; // Hanya import yang digunakan
+import { useState, useEffect } from "react";
+import AIPlaylistGenerator from "@/components/AIPlaylistGenerator"; // Impor komponen AI
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,13 +19,17 @@ export default function RootLayout({
 }>) {
   const [showSplash, setShowSplash] = useState(true);
 
+  useEffect(() => {
+    // ... (logika untuk memuat tema tetap sama)
+  }, []);
+
   return (
     <html lang="en">
       <head>
           <title>Spotify Clone</title>
           <meta name="description" content="Spotify clone built with Next.js" />
       </head>
-      <body className={`${inter.className} bg-black`}>
+      <body className="bg-background text-text-primary">
         {showSplash ? (
           <SplashScreen onFinished={() => setShowSplash(false)} />
         ) : (
@@ -35,6 +40,7 @@ export default function RootLayout({
                 {children}
               </main>
             </div>
+            <AIPlaylistGenerator /> {/* Letakkan komponen di sini */}
             <GlobalPlayer />
           </PlayerProvider>
         )}
