@@ -179,11 +179,11 @@ export default function NowPlayingView() {
                             <Repeat1 size={20} className={repeatMode === 'one' ? 'text-primary' : 'hidden'} /><Repeat size={20} className={repeatMode !== 'one' ? (repeatMode === 'all' ? 'text-primary' : '') : 'hidden'} />
                         </button>
                         <div className="flex items-center gap-4">
-                            <button onClick={playPrevious}><SkipBack size={36} className="fill-current" /></button>
-                            <button onClick={togglePlayPause} className="bg-white text-black rounded-full p-4 w-20 h-20 flex items-center justify-center">
-                                {isLoading ? <LoaderCircle size={36} className="animate-spin" /> : isPlaying ? <Pause size={36} className="fill-black" /> : <Play size={36} className="fill-black ml-1" />}
+                            <button onClick={playPrevious}><SkipBack size={36} className="fill-current hover:text-primary" /></button>
+                            <button onClick={togglePlayPause} className="bg-primary text-white hover:scale-110 rounded-full p-4 w-20 h-20 flex items-center justify-center">
+                                {isLoading ? <LoaderCircle size={36} className="animate-spin" /> : isPlaying ? <Pause size={36} className="fill-white" /> : <Play size={36} className="fill-white ml-1" />}
                             </button>
-                            <button onClick={playNext}><SkipForward size={36} className="fill-current" /></button>
+                            <button onClick={playNext}><SkipForward size={36} className="fill-current hover:text-primary" /></button>
                         </div>
                         <div className="w-12 h-12" />
                     </div>

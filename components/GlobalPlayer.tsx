@@ -41,7 +41,7 @@ export default function GlobalPlayer() {
           </div>
         </div>
 
-        {/* Kontrol Desktop */}
+        {/* Kontrol Desktop */} 
         <div className="hidden md:flex w-1/2 flex-col items-center justify-center gap-2 pointer-events-auto">
             <div className="flex items-center gap-4">
                 <button onClick={(e) => { e.stopPropagation(); toggleRepeatMode(); }} className="text-text-secondary hover:text-text-primary"><Repeat1 size={20} className={repeatMode === 'one' ? 'text-primary' : 'hidden'} /><Repeat size={20} className={repeatMode !== 'one' ? (repeatMode === 'all' ? 'text-primary' : '') : 'hidden'} /></button>

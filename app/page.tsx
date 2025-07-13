@@ -1,4 +1,3 @@
-// app/page.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -7,7 +6,7 @@ import { TrackCardSkeleton } from "@/components/TrackCardSkeleton";
 import { Track } from "@/types";
 import { usePlayer } from "@/app/context/PlayerContext";
 
-// Beri tipe pada array
+
 const shuffleArray = (array: Track[]): Track[] => {
   let currentIndex = array.length,  randomIndex;
   while (currentIndex !== 0) {
