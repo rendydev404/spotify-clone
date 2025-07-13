@@ -11,12 +11,14 @@ interface LyricLine {
   time: number;
   text: string;
 }
+
 const formatTime = (seconds: number) => {
     if (isNaN(seconds)) return '0:00';
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = Math.floor(seconds % 60);
     return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
 };
+
 // Komponen untuk menampilkan status lirik (Loading, Not Found, etc)
 const LyricsStatus = ({ icon: Icon, title, message }: { icon: React.ElementType, title: string, message?: string }) => (
     <div className="flex flex-col items-center justify-center text-center text-zinc-400 h-full">
@@ -65,7 +67,6 @@ export default function NowPlayingView() {
                     setIsLoadingLyrics(false);
                 }
             };
-            // Delay sedikit untuk memberi waktu YouTube Player siap
             setTimeout(fetchSyncedLyrics, 300);
         }
     }, [activeTrack, duration]);
@@ -75,7 +76,6 @@ export default function NowPlayingView() {
         if (!lyrics) return;
         
         let newIndex = -1;
-        // Cari baris terakhir yang waktunya sudah terlewat
         for (let i = 0; i < lyrics.length; i++) {
             if (progress >= lyrics[i].time) {
                 newIndex = i;
@@ -103,25 +103,25 @@ export default function NowPlayingView() {
 
     const imageUrl = activeTrack.album.images?.[0]?.url;
     const progressPercentage = duration ? (progress / duration) * 100 : 0;
-    const sliderStyle = { background: `linear-gradient(to right, #fff ${progressPercentage}%, #ffffff40 ${progressPercentage}%)`};
-
+    
+    // ==================================================================
+    // PERBAIKAN: Style untuk progress bar dengan warna yang benar
+    // ==================================================================
+    const sliderStyle = { background: `linear-gradient(to right, #6016ff ${progressPercentage}%, #ffffff50 ${progressPercentage}%)`};
     const isIntro = currentLineIndex === -1 && lyrics && lyrics.length > 0;
     
     return (
         <div className="fixed inset-0 bg-zinc-900 z-50 flex flex-col overflow-hidden">
-             {/* Latar Belakang Estetik Dinamis */}
             {imageUrl && <Image src={imageUrl} alt="" fill className="object-cover opacity-20 blur-3xl scale-125 transition-all duration-1000" />}
             <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/60 to-black z-10" />
 
             <div className="relative z-20 flex flex-col h-full p-4 md:p-6 text-white">
-                {/* Header */}
                 <div className="flex justify-between items-center flex-shrink-0">
                      <button onClick={closeNowPlayingView} className="p-2"><ChevronDown size={28} /></button>
                      <p className="font-bold truncate">{activeTrack.album.name}</p>
                      <div className="w-10" />
                 </div>
 
-                {/* Kontainer Lirik Utama */}
                 <div 
                   ref={lyricsContainerRef}
                   className="flex-grow w-full overflow-y-auto my-4 
@@ -135,11 +135,7 @@ export default function NowPlayingView() {
                               <p
                                   key={`${line.time}-${index}`}
                                   ref={el => { if(el) lineRefs.current[index] = el; }}
-                                  className={`
-                                      w-full text-left text-3xl md:text-4xl font-bold transition-all duration-500 ease-in-out
-                                      py-1
-                                      ${currentLineIndex === index ? 'text-white opacity-100' : 'text-zinc-400 opacity-50'}
-                                  `}
+                                  className={`w-full text-left text-3xl md:text-4xl font-bold transition-all duration-500 ease-in-out py-1 ${currentLineIndex === index ? 'text-white opacity-100' : 'text-zinc-400 opacity-50'}`}
                               >
                                   {line.text}
                               </p>
@@ -151,7 +147,6 @@ export default function NowPlayingView() {
                     </div>
                 </div>
 
-                {/* Footer Kontrol */}
                 <div className="flex-shrink-0">
                     <div className="flex items-center gap-4 mb-4">
                         {imageUrl && <Image src={imageUrl} alt={activeTrack.name} width={56} height={56} className="rounded-md shadow-lg" />}
@@ -161,8 +156,19 @@ export default function NowPlayingView() {
                         </div>
                     </div>
                     <div className="w-full mb-1">
-                        <input type="range" min="0" max={duration || 0} value={progress} onChange={(e) => seek(Number(e.target.value))} style={sliderStyle}
-                            className="w-full h-1.5 rounded-lg appearance-none cursor-pointer [&::-webkit-slider-thumb]:appearance-none" />
+                        {/* ================================================================== */}
+                        {/* PERBAIKAN: Mengembalikan style untuk kenop (thumb) pemutar */}
+                        {/* ================================================================== */}
+                        <input type="range" min="0" max={duration || 0} value={progress}
+                            onChange={(e) => seek(Number(e.target.value))}
+                            style={sliderStyle}
+                            className="w-full h-1.5 appearance-none cursor-pointer group
+                                       [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3
+                                       [&::-webkit-slider-thumb]:h-3 [&::-webkit-slider-thumb]:bg-white
+                                       [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:shadow-lg
+                                       [&::-webkit-slider-thumb]:transition-all [&::-webkit-slider-thumb]:duration-150
+                                       group-hover:[&::-webkit-slider-thumb]:w-4 group-hover:[&::-webkit-slider-thumb]:h-4"
+                        />
                         <div className="flex justify-between text-xs text-zinc-400 mt-1">
                             <span>{formatTime(progress)}</span>
                             <span>{formatTime(duration)}</span>
