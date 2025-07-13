@@ -57,7 +57,6 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
   const playerRef = useRef<PlayerInstance | null>(null);
   const intervalRef = useRef<number | null>(null);
 
-  // Fungsi untuk memulai timer progress bar (tidak berubah)
   const startTimer = () => {
     if (intervalRef.current) clearInterval(intervalRef.current);
     intervalRef.current = window.setInterval(() => {
@@ -69,7 +68,6 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
   const stopTimer = () => { if (intervalRef.current) clearInterval(intervalRef.current); };
   useEffect(() => { return () => stopTimer(); }, []);
 
-  // Fungsi untuk memuat dan memainkan lagu dari YouTube (tidak berubah)
   const loadAndPlaySong = async (track: Track) => {
     setIsLoading(true);
     setIsPlaying(false);
@@ -86,7 +84,6 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  // Fungsi untuk memulai lagu dari daftar putar (tidak berubah)
   const playSong = (track: Track, newQueue: Track[] = [track], index: number = 0) => {
     if (activeTrack?.id === track.id) {
         togglePlayPause();
@@ -96,8 +93,7 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
     setCurrentIndex(index);
     loadAndPlaySong(track);
   };
-
-  // Fungsi untuk memainkan lagu berikutnya (tidak berubah)
+  
   const playNext = () => {
     if (queue.length === 0) return;
     const nextIndex = (currentIndex + 1);
@@ -112,7 +108,6 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
     loadAndPlaySong(queue[finalIndex]);
   };
 
-  // Fungsi untuk memainkan lagu sebelumnya (tidak berubah)
   const playPrevious = () => {
     if (queue.length === 0) return;
     if (progress > 3) {
@@ -124,9 +119,8 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
     loadAndPlaySong(queue[prevIndex]);
   };
 
-  // ✅ FUNGSI BARU: Memulai Radio Lagu
   const startRadio = async () => {
-    if (!activeTrack || !activeTrack.artists[0]?.id) return; // Butuh ID artis untuk rekomendasi
+    if (!activeTrack || !activeTrack.artists[0]?.id) return;
     
     console.log(`Memulai Radio berdasarkan artis: ${activeTrack.artists[0].name}`);
     setIsLoading(true);
@@ -135,19 +129,15 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
       const res = await fetch(`/api/spotify?type=recommendations&seed_artists=${activeTrack.artists[0].id}&limit=10`);
       const data = await res.json();
       
-      // Spotify mengembalikan 'tracks', bukan 'items' untuk rekomendasi
       const recommendedTracks = data.tracks || [];
       
       if (recommendedTracks.length > 0) {
-        // Gabungkan antrean saat ini dengan lagu baru
         const newQueue = [...queue.slice(0, currentIndex + 1), ...recommendedTracks];
         setQueue(newQueue);
-        // Langsung mainkan lagu berikutnya dari hasil rekomendasi
         const nextIndex = currentIndex + 1;
         setCurrentIndex(nextIndex);
         loadAndPlaySong(newQueue[nextIndex]);
       } else {
-        // Jika tidak ada rekomendasi, hentikan pemutaran
         setIsPlaying(false);
         setActiveTrack(null);
       }
@@ -158,7 +148,9 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  // Event handler saat state player berubah (sudah di-upgrade)
+  // ==================================================================
+  // PERBAIKAN: Logika di sini diperbaiki agar radio berjalan dengan benar
+  // ==================================================================
   const onPlayerStateChange = (event: YouTubeEvent) => {
     if (event.data === 1) { // Playing
       setIsPlaying(true);
@@ -169,17 +161,23 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
       stopTimer();
     } else if (event.data === 0) { // Ended
       if (repeatMode === 'one') {
-        playerRef.current?.seekTo(0);
-      } else if (repeatMode === 'all' && currentIndex < queue.length - 1) {
+        playerRef.current?.seekTo(0, true);
+        return;
+      }
+      if (repeatMode === 'all') {
         playNext();
+        return;
+      }
+      // Untuk mode 'none'
+      const isLastSongInQueue = currentIndex >= queue.length - 1;
+      if (isLastSongInQueue) {
+        startRadio(); // Hanya mulai radio jika lagu terakhir habis
       } else {
-        // ✅ Jika lagu terakhir di antrean selesai, mulai radio!
-        startRadio();
+        playNext(); // Jika tidak, mainkan lagu berikutnya di antrean
       }
     }
   };
   
-  // Sisa fungsi (tidak berubah)
   const toggleRepeatMode = () => setRepeatMode(prev => prev === 'none' ? 'all' : prev === 'all' ? 'one' : 'none');
   const togglePlayPause = () => { if (isPlaying) playerRef.current?.pauseVideo(); else playerRef.current?.playVideo(); };
   const seek = (time: number) => { playerRef.current?.seekTo(time, true); };

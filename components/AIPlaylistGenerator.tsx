@@ -65,9 +65,9 @@ export default function AIPlaylistGenerator() {
   return (
     <>
       {/* Tombol Mengambang (Floating Action Button) */}
-      <div className={`fixed right-4 md:right-8 z-40 transition-all duration-300 ease-in-out
+       <div className={`fixed right-4 md:right-8 z-[45] transition-all duration-300 ease-in-out
         ${activeTrack 
-          ? 'bottom-24 md:bottom-28' // Sesuaikan posisi jika ada player
+          ? 'bottom-[10rem] md:bottom-24' // 1rem di atas player
           : 'bottom-20 md:bottom-8'
         }`
       }>

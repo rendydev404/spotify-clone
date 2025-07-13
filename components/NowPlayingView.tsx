@@ -112,7 +112,7 @@ export default function NowPlayingView() {
     
     return (
         <div className="fixed inset-0 bg-zinc-900 z-50 flex flex-col overflow-hidden">
-            {imageUrl && <Image src={imageUrl} alt="" fill className="object-cover opacity-20 blur-3xl scale-125 transition-all duration-1000" />}
+            {imageUrl && <Image src={imageUrl} alt="" fill className="object-cover opacity-10 blur-3xl scale-125 transition-all duration-1000" />}
             <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/60 to-black z-10" />
 
             <div className="relative z-20 flex flex-col h-full p-4 md:p-6 text-white">
