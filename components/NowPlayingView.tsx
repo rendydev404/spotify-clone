@@ -135,7 +135,7 @@ export default function NowPlayingView() {
                               <p
                                   key={`${line.time}-${index}`}
                                   ref={el => { if(el) lineRefs.current[index] = el; }}
-                                  className={`w-full text-left text-3xl md:text-4xl font-bold transition-all duration-500 ease-in-out py-1 ${currentLineIndex === index ? 'text-white opacity-100' : 'text-zinc-400 opacity-50'}`}
+                                  className={`w-full text-left text-3xl md:text-4xl font-bold transition-all duration-500 ease-in-out py-1 ${currentLineIndex === index ? 'text-white opacity-100' : 'text-primary'}`}
                               >
                                   {line.text}
                               </p>
