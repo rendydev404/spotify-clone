@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User, X, Instagram, Github, Mail, Linkedin, Code, Atom, Palette, Layers, Music, Play, Brain, Globe, Sparkles, Database, Cpu } from 'lucide-react';
 import { usePlayer } from '@/app/context/PlayerContext';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 const DevInfo = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,6 +14,7 @@ const DevInfo = () => {
   const [imageError, setImageError] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
   const { activeTrack } = usePlayer();
+  const { trackSocialClick, trackProfilePhotoClick, trackButtonClick } = useAnalytics();
 
   useEffect(() => {
     // Show the floating icon after a delay
@@ -159,7 +161,10 @@ const DevInfo = () => {
                   animate={{ scale: 1 }}
                   transition={{ delay: 0.1, type: "spring", stiffness: 400 }}
                   className="relative cursor-pointer"
-                  onClick={() => setShowImageModal(true)}
+                  onClick={() => {
+                  setShowImageModal(true);
+                  trackProfilePhotoClick();
+                }}
                 >
                   <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-primary/40 shadow-lg bg-gradient-to-br from-primary/20 to-primary/40 flex items-center justify-center relative hover:ring-primary/60 transition-all duration-300">
                     {/* Fallback background dengan gradient */}
@@ -292,6 +297,7 @@ const DevInfo = () => {
                     href={social.url}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() => trackSocialClick(social.name.toLowerCase())}
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.5 + index * 0.05 }}

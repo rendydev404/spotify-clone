@@ -8,6 +8,7 @@ import { usePlayer } from '@/app/context/PlayerContext';
 import TrackListItem from '@/components/TrackListItem';
 import { TrackListSkeleton } from '@/components/TrackCardSkeleton';
 import { useDebounce } from '@/hooks/useDebounce'; // Impor hook baru kita
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 const suggestedGenres = ["Pop", "Rock", "Indie", "Jazz", "Dangdut", "K-Pop", "Classical"];
 
@@ -20,6 +21,7 @@ export default function SearchPage() {
   const debouncedQuery = useDebounce(query, 400); // Terapkan debounce pada query
   const { playSong } = usePlayer();
   const searchContainerRef = useRef<HTMLDivElement>(null);
+  const { trackSearch } = useAnalytics();
 
   // Efek untuk melakukan pencarian setiap kali debouncedQuery berubah
   useEffect(() => {
@@ -33,7 +35,11 @@ export default function SearchPage() {
       try {
         const res = await fetch(`/api/spotify?q=${encodeURIComponent(debouncedQuery)}&type=track&limit=15`);
         const data = await res.json();
-        setResults(data?.tracks?.items.filter((track: Track) => track.album?.images?.length > 0) || []);
+        const filteredResults = data?.tracks?.items.filter((track: Track) => track.album?.images?.length > 0) || [];
+        setResults(filteredResults);
+        
+        // Track search analytics
+        trackSearch(debouncedQuery, filteredResults.length);
       } catch (error) {
         console.error("Gagal melakukan pencarian:", error);
         setResults([]);

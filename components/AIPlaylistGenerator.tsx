@@ -2,6 +2,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useAnalytics } from '@/hooks/useAnalytics';
 import { WandSparkles, X, LoaderCircle } from "lucide-react";
 import { Track } from "@/types";
 import { usePlayer } from "@/app/context/PlayerContext";
@@ -15,6 +16,7 @@ export default function AIPlaylistGenerator() {
   const [error, setError] = useState("");
   const { playSong, activeTrack } = usePlayer();
   const router = useRouter();
+  const { trackPlaylistGeneration, trackButtonClick, trackError } = useAnalytics();
 
   const handleGeneratePlaylist = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -49,6 +51,7 @@ export default function AIPlaylistGenerator() {
         playSong(tracks[0], tracks, 0);
         router.push('/playlist');
         setIsOpen(false);
+        trackPlaylistGeneration(prompt, tracks.length);
       } else {
         setError("Tidak ada lagu yang ditemukan untuk deskripsi itu.");
       }
@@ -56,6 +59,7 @@ export default function AIPlaylistGenerator() {
     } catch (err) {
       const errorMessage = (err instanceof Error) ? err.message : "Terjadi kesalahan tidak diketahui.";
       setError(`Gagal membuat playlist: ${errorMessage}`);
+      trackError('playlist_generation', errorMessage);
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -72,7 +76,10 @@ export default function AIPlaylistGenerator() {
         }`
       }>
         <motion.button 
-          onClick={() => setIsOpen(true)}
+          onClick={() => {
+            setIsOpen(true);
+            trackButtonClick('ai_playlist', 'floating_button');
+          }}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
           className="bg-primary text-white rounded-full p-4 shadow-lg"

@@ -4,6 +4,7 @@
 import Image from 'next/image';
 import { usePlayer } from '@/app/context/PlayerContext';
 import { Play, Pause, LoaderCircle, SkipBack, SkipForward, Repeat, Repeat1 } from 'lucide-react';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 const formatTime = (seconds: number) => {
     if (isNaN(seconds)) return '0:00';
@@ -17,6 +18,7 @@ export default function GlobalPlayer() {
     activeTrack, isPlaying, isLoading, progress, duration, openNowPlayingView,
     togglePlayPause, seek, playNext, playPrevious, repeatMode, toggleRepeatMode
   } = usePlayer();
+  const { trackMusicPlay } = useAnalytics();
 
   if (!activeTrack) return null;
   const imageUrl = activeTrack.album.images?.[0]?.url;
@@ -46,7 +48,13 @@ export default function GlobalPlayer() {
             <div className="flex items-center gap-4">
                 <button onClick={(e) => { e.stopPropagation(); toggleRepeatMode(); }} className="text-text-secondary hover:text-text-primary"><Repeat1 size={20} className={repeatMode === 'one' ? 'text-primary' : 'hidden'} /><Repeat size={20} className={repeatMode !== 'one' ? (repeatMode === 'all' ? 'text-primary' : '') : 'hidden'} /></button>
                 <button onClick={(e) => { e.stopPropagation(); playPrevious(); }} className="text-text-secondary hover:text-text-primary"><SkipBack /></button>
-                <button onClick={(e) => { e.stopPropagation(); togglePlayPause(); }} className="bg-text-primary text-white bg-primary rounded-full p-2 hover:scale-105">{isLoading ? <LoaderCircle size={24} className="animate-spin" /> : isPlaying ? <Pause size={24} className="fill-current" /> : <Play size={24} className="fill-current ml-1" />}</button>
+                <button onClick={(e) => { 
+                  e.stopPropagation(); 
+                  if (!isPlaying && activeTrack) {
+                    trackMusicPlay(activeTrack.name, activeTrack.artists.map(a => a.name).join(', '), 'spotify');
+                  }
+                  togglePlayPause(); 
+                }} className="bg-text-primary text-white bg-primary rounded-full p-2 hover:scale-105">{isLoading ? <LoaderCircle size={24} className="animate-spin" /> : isPlaying ? <Pause size={24} className="fill-current" /> : <Play size={24} className="fill-current ml-1" />}</button>
                 <button onClick={(e) => { e.stopPropagation(); playNext(); }} className="text-text-secondary hover:text-text-primary"><SkipForward /></button>
             </div>
             <div className="flex items-center gap-2 w-full max-w-lg">
@@ -67,7 +75,13 @@ export default function GlobalPlayer() {
         
         {/* Tombol Putar/Jeda Mobile */}
         <div className="md:hidden pointer-events-auto">
-             <button onClick={(e) => { e.stopPropagation(); togglePlayPause(); }} className="p-2">{isPlaying ? <Pause size={32} className="fill-current text-white bg-primary rounded-full p-2"/> : <Play size={32} className="fill-current text-white bg-primary rounded-full p-2"/>}</button>
+             <button onClick={(e) => { 
+               e.stopPropagation(); 
+               if (!isPlaying && activeTrack) {
+                 trackMusicPlay(activeTrack.name, activeTrack.artists.map(a => a.name).join(', '), 'spotify');
+               }
+               togglePlayPause(); 
+             }} className="p-2">{isPlaying ? <Pause size={32} className="fill-current text-white bg-primary rounded-full p-2"/> : <Play size={32} className="fill-current text-white bg-primary rounded-full p-2"/>}</button>
         </div>
       </div>
     </div>
