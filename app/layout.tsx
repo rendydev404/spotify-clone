@@ -9,6 +9,7 @@ import GlobalPlayer from "@/components/GlobalPlayer";
 import SplashScreen from "@/components/SplashScreen";
 import { useState, useEffect } from "react";
 import AIPlaylistGenerator from "@/components/AIPlaylistGenerator"; // Impor komponen AI
+import DevInfo from "@/components/DevInfo"; // Impor komponen DevInfo
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -42,6 +43,7 @@ export default function RootLayout({
             </div>
             <AIPlaylistGenerator /> {/* Letakkan komponen di sini */}
             <GlobalPlayer />
+            <DevInfo /> {/* Developer Info dengan floating icon */}
           </PlayerProvider>
         )}
       </body>

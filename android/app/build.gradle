@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     namespace "com.rendydev.spotifyclone"
-    compileSdk rootProject.ext.compileSdkVersion
+    compileSdkVersion cdvMinSdkVersion
     defaultConfig {
         applicationId "com.rendydev.spotifyclone"
         minSdkVersion rootProject.ext.minSdkVersion
