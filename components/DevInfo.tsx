@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, X, Instagram, Github, Mail, Linkedin } from 'lucide-react';
+import { User, X, Instagram, Github, Mail, Linkedin, Code, Atom, Palette, Layers, Music, Play, Brain, Globe, Sparkles, Database, Cpu } from 'lucide-react';
 import { usePlayer } from '@/app/context/PlayerContext';
 
 const DevInfo = () => {
@@ -23,7 +23,7 @@ const DevInfo = () => {
   const socialLinks = [
     {
       name: 'Instagram',
-      url: 'https://instagram.com/rendyy404',
+      url: 'https://instagram.com/rendyy_404',
       icon: <Instagram size={14} />,
       bgColor: 'bg-primary'
     },
@@ -238,16 +238,51 @@ const DevInfo = () => {
                 </div>
               </div>
 
-              {/* Bio */}   
-              <motion.p
+              {/* Tech Stack */}   
+              <motion.div
                 initial={{ opacity: 0, y: 5 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
-                className="text-gray-300 text-xs mb-4 leading-relaxed"
+                className="mb-4"
               >
-                Passionate developer creating amazing digital experiences. 
-                Love building with modern technologies and pushing the boundaries of what's possible.
-              </motion.p>
+                <p className="text-gray-300 text-xs mb-2 leading-relaxed">
+                  Built with modern technologies:
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  <span className="px-2 py-1 bg-blue-500/20 text-blue-300 text-xs rounded-md border border-blue-500/30 flex items-center gap-1">
+                    <Code size={12} />
+                    Next.js
+                  </span>
+                  <span className="px-2 py-1 bg-blue-600/20 text-blue-300 text-xs rounded-md border border-blue-600/30 flex items-center gap-1">
+                    <Atom size={12} />
+                    React
+                  </span>
+                  <span className="px-2 py-1 bg-purple-500/20 text-purple-300 text-xs rounded-md border border-purple-500/30 flex items-center gap-1">
+                    <Code size={12} />
+                    TypeScript
+                  </span>
+                  <span className="px-2 py-1 bg-cyan-500/20 text-cyan-300 text-xs rounded-md border border-cyan-500/30 flex items-center gap-1">
+                    <Palette size={12} />
+                    Tailwind CSS
+                  </span>
+                  <span className="px-2 py-1 bg-green-500/20 text-green-300 text-xs rounded-md border border-green-500/30 flex items-center gap-1">
+                    <Sparkles size={12} />
+                    Framer Motion
+                  </span>
+                  <span className="px-2 py-1 bg-yellow-500/20 text-yellow-300 text-xs rounded-md border border-yellow-500/30 flex items-center gap-1">
+                    <Music size={12} />
+                    Spotify API
+                  </span>
+                  <span className="px-2 py-1 bg-red-500/20 text-red-300 text-xs rounded-md border border-red-500/30 flex items-center gap-1">
+                    <Play size={12} />
+                    YouTube API
+                  </span>
+                  <span className="px-2 py-1 bg-indigo-500/20 text-indigo-300 text-xs rounded-md border border-indigo-500/30 flex items-center gap-1">
+                    <Cpu size={12} />
+                    Gemini API
+                  </span>
+                </div>
+              </motion.div>
 
               {/* Social Links */}
               <div className="space-y-2">
