@@ -1,12 +1,18 @@
-// next.config.ts
+import type { NextConfig } from "next";
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  typescript: {
-    // Kita tetap biarkan ini untuk mengabaikan error tipe minor
-    ignoreBuildErrors: true,
+const nextConfig: NextConfig = {
+  /* config options here */
+  experimental: {
+    turbo: {
+      rules: {
+        '*.svg': {
+          loaders: ['@svgr/webpack'],
+          as: '*.js',
+        },
+      },
+    },
   },
-  
+  // Image configuration for external domains
   images: {
     remotePatterns: [
       {
@@ -15,8 +21,48 @@ const nextConfig = {
         port: '',
         pathname: '/image/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'mosaic.scdn.co',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'wrapped-images.spotifycdn.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'seeded-session-images.scdn.co',
+        port: '',
+        pathname: '/**',
+      },
     ],
+  },
+  // Hide admin pages from sitemap generation
+  async generateStaticParams() {
+    return [];
+  },
+  // Custom headers for admin pages
+  async headers() {
+    return [
+      {
+        source: '/admin/:path*',
+        headers: [
+          {
+            key: 'X-Robots-Tag',
+            value: 'noindex, nofollow, noarchive, nosnippet',
+          },
+          {
+            key: 'Cache-Control',
+            value: 'no-store, no-cache, must-revalidate, proxy-revalidate',
+          },
+        ],
+      },
+    ];
   },
 };
 
-module.exports = nextConfig;
+export default nextConfig;

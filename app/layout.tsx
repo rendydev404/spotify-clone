@@ -11,7 +11,6 @@ import { useState, useEffect } from "react";
 import AIPlaylistGenerator from "@/components/AIPlaylistGenerator"; // Impor komponen AI
 import DevInfo from "@/components/DevInfo"; // Impor komponen DevInfo
 import GoogleAnalytics from "@/components/GoogleAnalytics"; // Impor Google Analytics
-import AnalyticsDashboard from "@/components/AnalyticsDashboard"; // Impor Analytics Dashboard
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -47,7 +46,6 @@ export default function RootLayout({
             <GlobalPlayer />
             <DevInfo /> {/* Developer Info dengan floating icon */}
             <GoogleAnalytics /> {/* Google Analytics tracking */}
-            <AnalyticsDashboard /> {/* Analytics Dashboard */}
           </PlayerProvider>
         )}
       </body>
