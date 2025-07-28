@@ -10,7 +10,7 @@ import {
   LogOut,
   RefreshCw
 } from 'lucide-react';
-// import AnalyticsDashboard from '@/components/AnalyticsDashboard';
+import AnalyticsDashboard from '@/components/AnalyticsDashboard';
 
 export default function AdminAnalyticsPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -158,15 +158,7 @@ export default function AdminAnalyticsPage() {
         </motion.div>
 
         {/* Analytics Dashboard */}
-        <div className="bg-gray-800/50 backdrop-blur-xl rounded-2xl p-6 border border-gray-700/50">
-          <h2 className="text-2xl font-bold text-white mb-4">Analytics Dashboard</h2>
-          <p className="text-gray-400">Dashboard analytics akan muncul di sini setelah komponen AnalyticsDashboard di-import.</p>
-          <div className="mt-4 p-4 bg-gray-700/30 rounded-lg">
-            <p className="text-sm text-gray-300">
-              Status: Dashboard sedang dalam maintenance
-            </p>
-          </div>
-        </div>
+        <AnalyticsDashboard />
       </div>
     </div>
   );
