@@ -35,6 +35,7 @@ export default function RootLayout({
         <meta name="keywords" content="spotify clone, musik streaming, musik gratis, lagu hits, taylor swift, james arthur, yovie nuno, tulus, ai playlist, player musik, search musik, streaming musik indonesia" />
         <meta name="author" content="Rendy Dev" />
         <meta name="robots" content="index, follow" />
+        <meta name="google-site-verification" content="r9BfynTm4wA2LB4QHhi5RqqCnDslr9GBZFTGTko-c1s" />
         <meta name="language" content="Indonesian" />
         <meta name="revisit-after" content="7 days" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
