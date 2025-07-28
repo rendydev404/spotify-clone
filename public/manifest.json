@@ -1,0 +1,75 @@
+{
+  "name": "Spotify Clone Indonesia - Musik Streaming Gratis Terbaik 2025",
+  "short_name": "Spotify Clone",
+  "description": "Platform musik streaming gratis terbaik 2025 dengan fitur AI playlist generator. Dengarkan lagu-lagu hits dari Taylor Swift, James Arthur, Yovie & Nuno, Tulus dan artis favorit lainnya.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a1a1a",
+  "theme_color": "#1DB954",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "id",
+  "categories": ["music", "entertainment"],
+  "icons": [
+    {
+      "src": "/spotify-logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/spotify-logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/spotify-logo.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "/spotify-logo.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Search Musik",
+      "short_name": "Search",
+      "description": "Cari lagu favorit Anda",
+      "url": "/search",
+      "icons": [
+        {
+          "src": "/spotify-logo.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "AI Playlist",
+      "short_name": "AI Playlist",
+      "description": "Buat playlist dengan AI",
+      "url": "/playlist",
+      "icons": [
+        {
+          "src": "/spotify-logo.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "launch_handler": {
+    "client_mode": "navigate-existing"
+  }
+} 

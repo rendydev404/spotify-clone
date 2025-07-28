@@ -1,9 +1,55 @@
+# Spotify Clone Indonesia - Robots.txt
+# Platform musik streaming gratis terbaik 2025
+
 User-agent: *
 Allow: /
+
+# Sitemap
+Sitemap: https://spotify-clone-by-rendydev.vercel.app/sitemap.xml
+
+# Crawl-delay untuk menghormati server
+Crawl-delay: 1
 
 # Disallow admin pages
 Disallow: /admin/
 Disallow: /admin/analytics
 
-# Sitemap (optional)
-# Sitemap: https://yourdomain.com/sitemap.xml 
+# Allow important pages
+Allow: /search
+Allow: /playlist
+Allow: /track/
+
+# Block unnecessary files
+Disallow: /api/
+Disallow: /_next/
+Disallow: /favicon.ico
+Disallow: /spotify-logo.png
+
+# Allow images and assets
+Allow: /*.jpg
+Allow: /*.jpeg
+Allow: /*.png
+Allow: /*.gif
+Allow: /*.svg
+Allow: /*.css
+Allow: /*.js
+
+# Google specific
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 1
+
+# Bing specific
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+# Social media crawlers
+User-agent: Twitterbot
+Allow: /
+
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: LinkedInBot
+Allow: / 

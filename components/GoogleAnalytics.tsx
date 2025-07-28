@@ -30,11 +30,19 @@ export const event = ({ action, category, label, value }: {
   value?: number;
 }) => {
   if (typeof window !== 'undefined' && window.gtag) {
+    // GA4 event format
     window.gtag('event', action, {
       event_category: category,
       event_label: label,
       value: value,
+      // Add custom parameters for better tracking
+      custom_parameter_1: category,
+      custom_parameter_2: label,
+      custom_parameter_3: value,
     });
+    
+    // Also log to console for debugging
+    console.log('📊 GA Event:', { action, category, label, value });
   }
 };
 

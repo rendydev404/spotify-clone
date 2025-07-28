@@ -9,6 +9,10 @@
     "lint": "next lint",
     "setup-analytics": "node scripts/setup-analytics.js",
     "setup-real-analytics": "node scripts/setup-real-analytics.js",
+    "setup-ga": "node scripts/setup-ga-config.js",
+    "check-analytics": "node scripts/check-analytics.js",
+    "test-events": "node scripts/test-events.js",
+    "test-custom-events": "node scripts/test-custom-events.js",
     "extract-ga": "node scripts/extract-ga-credentials.js"
   },
   "dependencies": {
