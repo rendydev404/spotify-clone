@@ -42,9 +42,9 @@ const nextConfig: NextConfig = {
     ],
   },
   // Hide admin pages from sitemap generation
-  async generateStaticParams() {
-    return [];
-  },
+  // async generateStaticParams() {
+  //   return [];
+  // },
   // Custom headers for admin pages
   async headers() {
     return [
