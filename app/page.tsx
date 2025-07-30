@@ -5,11 +5,12 @@ import TrackCard from "@/components/TrackCard";
 import { TrackCardSkeleton } from "@/components/TrackCardSkeleton";
 import { Track } from "@/types";
 import { usePlayer } from "@/app/context/PlayerContext";
-import { Music, Sparkles, Search, Smartphone, User, Play } from "lucide-react";
+import { Music, Sparkles, Search, Smartphone, User, Play, Brain } from "lucide-react";
 import Image from "next/image";
 import spotifyLogo from "../public/spotify-logo.png";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
+import { event } from "@/components/GoogleAnalytics";
 
 const shuffleArray = (array: Track[]): Track[] => {
   let currentIndex = array.length,  randomIndex;
@@ -40,6 +41,14 @@ export default function HomePage() {
         const allTracks = results.flatMap(result => result.tracks?.items || []);
         const validTracks = allTracks.filter((track: Track) => track && track.album?.images?.length > 0);
         setDiscoverTracks(shuffleArray(validTracks));
+        
+        // Track homepage load event
+        event({
+          action: 'homepage_loaded',
+          category: 'page',
+          label: 'Homepage loaded successfully',
+          value: validTracks.length
+        });
       } catch (error) {
         console.error("Gagal mengambil lagu rekomendasi:", error);
       } finally {
@@ -48,6 +57,33 @@ export default function HomePage() {
     };
     getDiscoverTracks();
   }, []);
+
+  const scrollToSongCards = () => {
+    songCardsRef.current?.scrollIntoView({ 
+      behavior: 'smooth',
+      block: 'start'
+    });
+    
+    // Track scroll to songs event
+    event({
+      action: 'scroll_to_songs',
+      category: 'navigation',
+      label: 'User scrolled to song cards',
+      value: 1
+    });
+  };
+
+  const navigateToSearch = () => {
+    // Track search navigation event
+    event({
+      action: 'navigate_to_search',
+      category: 'navigation',
+      label: 'User navigated to search page',
+      value: 1
+    });
+    
+    router.push('/search');
+  };
 
   const TracksGrid = ({ tracks }: { tracks: Track[] }) => (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
@@ -76,7 +112,7 @@ export default function HomePage() {
     {
       title: "AI Playlist Generator",
       description: "Buat playlist otomatis dengan AI canggih. Cukup berikan deskripsi, AI akan membuat playlist sesuai mood.",
-      icon: Sparkles,
+      icon: Brain,
     },
     {
       title: "Search Musik Cepat",
@@ -89,17 +125,6 @@ export default function HomePage() {
       icon: Smartphone,
     },
   ];
-
-  const scrollToSongCards = () => {
-    songCardsRef.current?.scrollIntoView({ 
-      behavior: 'smooth',
-      block: 'start'
-    });
-  };
-
-  const navigateToSearch = () => {
-    router.push('/search');
-  };
 
   return (
     <main className="bg-zinc-900 text-white min-h-screen p-0 md:p-0">

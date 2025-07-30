@@ -11,6 +11,7 @@ import { useState, useEffect } from "react";
 import AIPlaylistGenerator from "@/components/AIPlaylistGenerator"; // Impor komponen AI
 import DevInfo from "@/components/DevInfo"; // Impor komponen DevInfo
 import GoogleAnalytics from "@/components/GoogleAnalytics"; // Impor Google Analytics
+import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,6 +29,32 @@ export default function RootLayout({
   return (
     <html lang="id">
       <head>
+        {/* Google Analytics Script */}
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=G-L0V33E1LY5`}
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-L0V33E1LY5', {
+              page_title: document.title,
+              page_location: window.location.href,
+              debug_mode: true
+            });
+            
+            // Custom events for better tracking
+            window.addEventListener('load', function() {
+              gtag('event', 'page_view', {
+                page_title: document.title,
+                page_location: window.location.href
+              });
+            });
+          `}
+        </Script>
+
         {/* Primary Meta Tags */}
         <title>Spotify Clone - Musik Streaming Gratis Terbaik 2025 | Spotify Clone Indonesia</title>
         <meta name="title" content="Spotify Clone - Musik Streaming Gratis Terbaik 2025 | Spotify Clone Indonesia" />

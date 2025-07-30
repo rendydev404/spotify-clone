@@ -11,7 +11,7 @@ declare global {
 }
 
 // Google Analytics tracking function
-export const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-L0V33E1LY5';
+export const GA_TRACKING_ID = 'G-L0V33E1LY5';
 
 // Log page views
 export const pageview = (url: string) => {
@@ -64,34 +64,6 @@ export default function GoogleAnalytics() {
 
   return (
     <>
-      {/* Google Analytics Script */}
-      <script
-        async
-        src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
-      />
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${GA_TRACKING_ID}', {
-              page_title: document.title,
-              page_location: window.location.href,
-              debug_mode: true
-            });
-            
-            // Custom events for better tracking
-            window.addEventListener('load', function() {
-              gtag('event', 'page_view', {
-                page_title: document.title,
-                page_location: window.location.href
-              });
-            });
-          `,
-        }}
-      />
-      
       {/* Vercel Analytics */}
       <Analytics />
     </>
