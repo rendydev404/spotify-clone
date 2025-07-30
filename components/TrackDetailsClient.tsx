@@ -84,8 +84,8 @@ export default function TrackDetailsClient({ track }: { track: Track }) {
 
         <div className="p-4 md:p-8 flex flex-col gap-8">
           <div className="flex items-center gap-6">
-            <button onClick={handlePlayClick} disabled={isLoading && isCurrentTrack} className="bg-primary rounded-full p-4 text-white hover:scale-105 transition-transform flex items-center justify-center w-20 h-20">{isLoading && isCurrentTrack ? <LoaderCircle size={32} className="animate-spin" /> : isPlaying && isCurrentTrack ? <Pause size={32} className="fill-white" /> : <Play size={32} className="fill-white ml-1" />}</button>
-            <button onClick={handlePlaylistToggle} className="text-zinc-400 hover:text-white transition-colors">{isInPlaylist ? <Check size={32} className="text-primary" /> : <Plus size={32} />}</button>
+                         <button onClick={handlePlayClick} disabled={isLoading && isCurrentTrack} className="bg-primary rounded-full p-4 text-white hover:scale-105 transition-transform flex items-center justify-center w-20 h-20">{isLoading && isCurrentTrack ? <LoaderCircle size={32} className="animate-spin" /> : isPlaying && isCurrentTrack ? <Pause size={32} className="fill-white" /> : <Play size={32} className="fill-white ml-1" />}</button>
+                         <button onClick={handlePlaylistToggle} className="text-zinc-400 hover:text-white transition-colors">{isInPlaylist ? <Check size={32} className="text-primary" /> : <Plus size={32} />}</button>
           </div>
           
           <div>

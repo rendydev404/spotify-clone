@@ -11,14 +11,15 @@ declare global {
 }
 
 // Google Analytics tracking function
-export const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+export const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-L0V33E1LY5';
 
 // Log page views
 export const pageview = (url: string) => {
   if (typeof window !== 'undefined' && window.gtag) {
-    window.gtag('config', GA_TRACKING_ID!, {
+    window.gtag('config', GA_TRACKING_ID, {
       page_location: url,
     });
+    console.log('📊 GA Pageview:', url);
   }
 };
 
@@ -61,10 +62,6 @@ export const useGoogleAnalytics = () => {
 export default function GoogleAnalytics() {
   useGoogleAnalytics();
 
-  if (!GA_TRACKING_ID) {
-    return null;
-  }
-
   return (
     <>
       {/* Google Analytics Script */}
@@ -81,6 +78,15 @@ export default function GoogleAnalytics() {
             gtag('config', '${GA_TRACKING_ID}', {
               page_title: document.title,
               page_location: window.location.href,
+              debug_mode: true
+            });
+            
+            // Custom events for better tracking
+            window.addEventListener('load', function() {
+              gtag('event', 'page_view', {
+                page_title: document.title,
+                page_location: window.location.href
+              });
             });
           `,
         }}

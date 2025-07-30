@@ -6,11 +6,12 @@ import {
   Lock,
   Eye,
   EyeOff,
-  Shield,
   LogOut,
   RefreshCw
 } from 'lucide-react';
 import AnalyticsDashboard from '@/components/AnalyticsDashboard';
+import Image from 'next/image';
+import spotifyLogo from "../../../public/spotify-logo.png";
 
 export default function AdminAnalyticsPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -53,7 +54,13 @@ export default function AdminAnalyticsPage() {
         >
           <div className="text-center mb-8">
             <div className="bg-primary/20 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-              <Shield className="text-primary" size={32} />
+              <Image
+                src={spotifyLogo}
+                alt="Spotify Logo"
+                width={32}
+                height={32}
+                className="rounded-full"
+              />
             </div>
             <h1 className="text-2xl font-bold text-white mb-2">Admin Analytics</h1>
             <p className="text-gray-400">Masukkan password untuk mengakses dashboard</p>
@@ -127,7 +134,13 @@ export default function AdminAnalyticsPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="bg-primary/20 p-3 rounded-xl">
-                <Shield className="text-primary" size={28} />
+                <Image
+                  src={spotifyLogo}
+                  alt="Spotify Logo"
+                  width={28}
+                  height={28}
+                  className="rounded-full"
+                />
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-white">Admin Analytics Dashboard</h1>

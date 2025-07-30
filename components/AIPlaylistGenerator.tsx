@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from "react";
 import { useAnalytics } from '@/hooks/useAnalytics';
-import { WandSparkles, X, LoaderCircle } from "lucide-react";
+import { Sparkles, X, LoaderCircle } from "lucide-react";
 import { Track } from "@/types";
 import { usePlayer } from "@/app/context/PlayerContext";
 import { useRouter } from "next/navigation";
@@ -85,7 +85,7 @@ export default function AIPlaylistGenerator() {
           className="bg-primary text-white rounded-full p-4 shadow-lg"
           aria-label="Buat Playlist AI"
         >
-          <WandSparkles size={28} />
+          <Sparkles size={28} />
         </motion.button>
       </div>
 
@@ -114,7 +114,7 @@ export default function AIPlaylistGenerator() {
               </button>
               <div className="flex items-center gap-3 mb-4">
                 <div className="bg-primary/20 p-2 rounded-lg">
-                  <WandSparkles className="text-primary" size={24}/>
+                  <Sparkles className="text-primary" size={24}/>
                 </div>
                 <h2 className="text-xl font-bold">AI Playlist Generator</h2>
               </div>

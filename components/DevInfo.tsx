@@ -166,13 +166,13 @@ const DevInfo = () => {
                   trackProfilePhotoClick();
                 }}
                 >
-                  <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-primary/40 shadow-lg bg-gradient-to-br from-primary/20 to-primary/40 flex items-center justify-center relative hover:ring-primary/60 transition-all duration-300">
+                  <div className="w-10 h-10 rounded-full overflow-hidden ring-2 ring-blue-500/40 shadow-lg bg-gradient-to-br from-blue-500/20 to-blue-500/40 flex items-center justify-center relative hover:ring-blue-500/60 transition-all duration-300">
                     {/* Fallback background dengan gradient */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/30 via-primary/20 to-primary/40" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-500/30 via-blue-500/20 to-blue-500/40" />
                     
                     {/* Fallback emoji jika gambar error */}
                     {imageError && (
-                      <div className="absolute inset-0 flex items-center justify-center text-primary text-2xl font-bold z-10">
+                      <div className="absolute inset-0 flex items-center justify-center text-blue-500 text-2xl font-bold z-10">
                         👨‍💻
                       </div>
                     )}
@@ -314,14 +314,14 @@ const DevInfo = () => {
                     >
                       {social.icon}
                     </motion.div>
-                    <span className="text-white font-medium group-hover:text-primary/80 transition-colors duration-200 text-xs">
+                    <span className="text-white font-medium group-hover:text-blue-500/80 transition-colors duration-200 text-xs">
                       {social.name}
                     </span>
                     <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: 0.7 + index * 0.05 }}
-                      className="ml-auto text-primary/60 opacity-0 group-hover:opacity-100 transition-all duration-200"
+                      className="ml-auto text-blue-500/60 opacity-0 group-hover:opacity-100 transition-all duration-200"
                     >
                       →
                     </motion.div>
@@ -370,7 +370,7 @@ const DevInfo = () => {
               className="relative max-w-xs w-full"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="relative w-full aspect-square rounded-full overflow-hidden shadow-2xl ring-4 ring-primary/30">
+              <div className="relative w-full aspect-square rounded-full overflow-hidden shadow-2xl ring-4 ring-blue-500/30">
                 <Image
                   src="/pp1.jpg"
                   alt="Developer Profile"

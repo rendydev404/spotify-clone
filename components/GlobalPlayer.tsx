@@ -54,7 +54,7 @@ export default function GlobalPlayer() {
                     trackMusicPlay(activeTrack.name, activeTrack.artists.map(a => a.name).join(', '), 'spotify');
                   }
                   togglePlayPause(); 
-                }} className="bg-text-primary text-white bg-primary rounded-full p-2 hover:scale-105">{isLoading ? <LoaderCircle size={24} className="animate-spin" /> : isPlaying ? <Pause size={24} className="fill-current" /> : <Play size={24} className="fill-current ml-1" />}</button>
+                 }} className="bg-text-primary text-white bg-primary rounded-full p-2 hover:scale-105">{isLoading ? <LoaderCircle size={24} className="animate-spin" /> : isPlaying ? <Pause size={24} className="fill-current" /> : <Play size={24} className="fill-current ml-1" />}</button>
                 <button onClick={(e) => { e.stopPropagation(); playNext(); }} className="text-text-secondary hover:text-text-primary"><SkipForward /></button>
             </div>
             <div className="flex items-center gap-2 w-full max-w-lg">
