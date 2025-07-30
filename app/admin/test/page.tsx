@@ -22,8 +22,8 @@ export default function TestPage() {
       results.push('❌ Test event failed: ' + error);
     }
 
-    // Test 2: Check if gtag exists
-    if (typeof window !== 'undefined' && window.gtag) {
+    // Test 2: Check if gtag exists and is callable
+    if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
       results.push('✅ gtag function is available');
     } else {
       results.push('❌ gtag function is not available');
@@ -72,7 +72,7 @@ export default function TestPage() {
             <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-4">
               <h3 className="text-lg font-semibold text-blue-300 mb-3">Instructions:</h3>
               <ul className="text-blue-200 text-sm space-y-2">
-                <li>• Click "Run Analytics Test" to test Google Analytics</li>
+                <li>• Click &quot;Run Analytics Test&quot; to test Google Analytics</li>
                 <li>• Check browser console for debug logs</li>
                 <li>• Wait 24-48 hours for data to appear in Google Analytics</li>
                 <li>• Make sure Measurement ID is correct: G-L0V33E1LY5</li>

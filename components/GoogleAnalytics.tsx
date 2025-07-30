@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation';
 declare global {
   interface Window {
     gtag: (...args: any[]) => void;
+    dataLayer: any[];
   }
 }
 

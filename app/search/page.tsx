@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
-import { Search, X, LoaderCircle, Music } from 'lucide-react';
+import { Search, X, Music } from 'lucide-react';
 import { Track } from '@/types';
 import { usePlayer } from '@/app/context/PlayerContext';
 import TrackListItem from '@/components/TrackListItem';

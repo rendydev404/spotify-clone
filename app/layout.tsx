@@ -1,7 +1,6 @@
 // app/layout.tsx
 "use client";
 
-import { Inter } from "next/font/google";
 import "./globals.css";
 import Sidebar from "@/components/Sidebar";
 import { PlayerProvider } from "@/app/context/PlayerContext";
@@ -12,8 +11,6 @@ import AIPlaylistGenerator from "@/components/AIPlaylistGenerator"; // Impor kom
 import DevInfo from "@/components/DevInfo"; // Impor komponen DevInfo
 import GoogleAnalytics from "@/components/GoogleAnalytics"; // Impor Google Analytics
 import Script from "next/script";
-
-const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({
   children,
