@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 
 // Simulasi data real-time dari Google Analytics
-let mockData = {
+const mockData = {
   pageViews: 0,
   musicPlays: 0,
   searches: 0,
