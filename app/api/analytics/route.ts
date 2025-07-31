@@ -38,7 +38,7 @@ const activeSessions = new Map<string, { lastSeen: Date; events: string[] }>();
 const uniqueVisitors = new Set<string>();
 
 // Update data berdasarkan events yang diterima
-export function updateAnalyticsData(eventType: string, details?: any) {
+function updateAnalyticsData(eventType: string, details?: any) {
   const now = new Date();
   
   // Update real-time users (sessions yang aktif dalam 5 menit terakhir)

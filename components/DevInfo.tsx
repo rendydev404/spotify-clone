@@ -6,12 +6,10 @@ import {
   Github, 
   Linkedin, 
   Instagram, 
-  Twitter, 
   Mail, 
   X, 
   ExternalLink,
   User,
-  Heart,
   Sparkles,
   Circle
 } from 'lucide-react';
@@ -298,9 +296,11 @@ export default function DevInfo() {
                       ease: "easeInOut"
                     }}
                   />
-                  <img
+                  <Image
                     src={selectedImage}
                     alt="Developer"
+                    width={400}
+                    height={400}
                     className="w-full h-full object-cover rounded-full relative z-0"
                   />
                 </div>
