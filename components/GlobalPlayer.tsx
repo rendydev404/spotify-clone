@@ -32,14 +32,54 @@ export default function GlobalPlayer() {
   };
 
   return (
-    <div onClick={openNowPlayingView} className="bg-zinc-900 fixed bottom-16 md:bottom-0 left-0 right-0 h-20 bg-surface border-t border-white/10 text-text-primary flex items-center px-4 z-40 cursor-pointer md:cursor-default">
-      <div className="w-full flex items-center justify-between md:justify-center">
-        {/* Info Lagu */}
-        <div className="flex items-center gap-3 w-full md:w-1/4 md:justify-start pointer-events-auto">
-          {imageUrl && <Image src={imageUrl} alt={activeTrack.name} width={56} height={56} className="rounded-md" />}
-          <div>
-            <p className="font-semibold truncate text-sm md:text-base">{activeTrack.name}</p>
-            <p className="text-xs text-text-secondary truncate">{activeTrack.artists.map(a => a.name).join(', ')}</p>
+    <div onClick={openNowPlayingView} className="bg-zinc-900 fixed bottom-16 md:bottom-0 left-0 right-0 h-20 bg-surface border-t border-white/10 text-text-primary flex items-center px-2 md:px-4 z-40 cursor-pointer md:cursor-default">
+      <div className="w-full max-w-[2000px] mx-auto flex items-center justify-between md:justify-center gap-4">
+        {/* Info Lagu & Mobile Controls */}
+        <div className="flex items-center justify-between w-full md:w-1/4 md:justify-start">
+          <div className="flex items-center gap-3 min-w-0 flex-1">
+            {imageUrl && (
+              <div className="flex-shrink-0">
+                <Image 
+                  src={imageUrl} 
+                  alt={activeTrack.name} 
+                  width={56} 
+                  height={56} 
+                  className="rounded-md" 
+                />
+              </div>
+            )}
+            <div className="min-w-0 flex-1 pr-2"> {/* Added padding-right untuk jarak dengan tombol */}
+              <p className="font-semibold text-sm md:text-base leading-normal text-ellipsis overflow-hidden whitespace-nowrap" 
+                 title={activeTrack.name}>
+                {activeTrack.name}
+              </p>
+              <p className="text-xs text-text-secondary text-ellipsis overflow-hidden whitespace-nowrap"
+                 title={activeTrack.artists.map(a => a.name).join(', ')}>
+                {activeTrack.artists.map(a => a.name).join(', ')}
+              </p>
+            </div>
+          </div>
+          
+          {/* Mobile Play Button - Moved inside info container */}
+          <div className="md:hidden flex-shrink-0">
+            <button 
+              onClick={(e) => { 
+                e.stopPropagation(); 
+                if (!isPlaying && activeTrack) {
+                  trackPlaySong(activeTrack.name);
+                }
+                togglePlayPause(); 
+              }} 
+              className="w-10 h-10 flex items-center justify-center bg-primary rounded-full"
+            >
+              {isLoading ? (
+                <LoaderCircle size={20} className="animate-spin text-white" />
+              ) : isPlaying ? (
+                <Pause size={20} className="fill-white text-white" />
+              ) : (
+                <Play size={20} className="fill-white text-white ml-0.5" />
+              )}
+            </button>
           </div>
         </div>
 
@@ -73,16 +113,6 @@ export default function GlobalPlayer() {
             </div>
         </div>
         
-        {/* Tombol Putar/Jeda Mobile */}
-        <div className="md:hidden pointer-events-auto">
-             <button onClick={(e) => { 
-               e.stopPropagation(); 
-               if (!isPlaying && activeTrack) {
-                 trackPlaySong(activeTrack.name);
-               }
-               togglePlayPause(); 
-             }} className="p-2">{isPlaying ? <Pause size={32} className="fill-current text-white bg-primary rounded-full p-2"/> : <Play size={32} className="fill-current text-white bg-primary rounded-full p-2"/>}</button>
-        </div>
       </div>
     </div>
   );

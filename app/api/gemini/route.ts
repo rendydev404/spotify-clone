@@ -2,22 +2,49 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { NextResponse } from 'next/server';
 
+// Validasi environment variable
+if (!process.env.GEMINI_API_KEY) {
+  throw new Error('GEMINI_API_KEY is not configured in environment variables');
+}
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+// Inisialisasi Gemini AI
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 export async function POST(req: Request) {
-  if (req.method !== 'POST') {
-    return NextResponse.json({ error: 'Method not allowed' }, { status: 405 });
-  }
-
   try {
-    const { prompt: userPrompt } = await req.json();
-
-    if (!userPrompt) {
-      return NextResponse.json({ error: 'Prompt is required' }, { status: 400 });
+    // Validasi environment
+    if (!process.env.GEMINI_API_KEY) {
+      console.error('GEMINI_API_KEY tidak ditemukan');
+      return NextResponse.json(
+        { error: 'Konfigurasi AI tidak lengkap. Mohon periksa pengaturan environment.' },
+        { status: 503 }
+      );
     }
 
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    // Parse dan validasi input
+    const { prompt: userPrompt } = await req.json();
+    
+    if (!userPrompt || typeof userPrompt !== 'string') {
+      return NextResponse.json(
+        { error: 'Prompt harus berupa teks' },
+        { status: 400 }
+      );
+    }
+
+    if (userPrompt.length > 1000) {
+      return NextResponse.json(
+        { error: 'Prompt terlalu panjang (max 1000 karakter)' },
+        { status: 400 }
+      );
+    }
+
+    const model = genAI.getGenerativeModel({
+      model: 'gemini-pro',
+      generationConfig: {
+        temperature: 0.7,
+        maxOutputTokens: 50,
+      }
+    });
 
     // ==================================================================
     // PROMPT ENGINEERING TINGKAT LANJUT: Memberi AI Persona & Kecerdasan Kontekstual
@@ -51,14 +78,51 @@ export async function POST(req: Request) {
       Output Anda:
     `;
 
-    const result = await model.generateContent(masterPrompt);
-    const response = await result.response;
-    const query = response.text().trim();
+    try {
+      // Generate content dengan proper error handling
+      const result = await model.generateContent(masterPrompt);
+      const response = await result.response;
+      const query = response.text().trim();
 
-    return NextResponse.json({ query });
+      if (!query) {
+        throw new Error('AI returned empty response');
+      }
+
+      // Validasi hasil query
+      if (query.length < 2 || query.length > 200) {
+        throw new Error('Invalid query length');
+      }
+
+      return NextResponse.json({ query });
+    } catch (error) {
+      console.error('Generation error:', error);
+
+      if (error instanceof Error) {
+        if (error.message === 'Request timeout') {
+          return NextResponse.json(
+            { error: 'Waktu pemrosesan terlalu lama. Silakan coba lagi.' },
+            { status: 408 }
+          );
+        }
+        if (error.message.includes('Empty')) {
+          return NextResponse.json(
+            { error: 'AI tidak dapat memproses permintaan Anda. Coba dengan kata kunci yang berbeda.' },
+            { status: 422 }
+          );
+        }
+      }
+
+      return NextResponse.json(
+        { error: 'Fitur Ini sedang dalam maintenance. Silakan coba lagi nanti.' },
+        { status: 500 }
+      );
+    }
 
   } catch (error) {
-    console.error('Error with Google Generative AI:', error);
-    return NextResponse.json({ error: 'Failed to generate playlist query' }, { status: 500 });
+    console.error('Request error:', error);
+    return NextResponse.json(
+      { error: 'Terjadi kesalahan sistem. Silakan coba beberapa saat lagi.' },
+      { status: 500 }
+    );
   }
-} 
+}

@@ -7,7 +7,6 @@ import { usePlayer } from '@/app/context/PlayerContext';
 import TrackListItem from '@/components/TrackListItem';
 import { TrackListSkeleton } from '@/components/TrackCardSkeleton';
 import { useDebounce } from '@/hooks/useDebounce';
-import { event } from '@/components/GoogleAnalytics';
 import { useAnalytics } from '@/hooks/useAnalytics';
 
 const suggestedGenres = ["Pop", "Rock", "Indie", "Jazz", "Dangdut", "K-Pop", "Classical"];
@@ -17,47 +16,95 @@ export default function SearchPage() {
   const [results, setResults] = useState<Track[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   
   const debouncedQuery = useDebounce(query, 400);
   const { playSong } = usePlayer();
   const searchContainerRef = useRef<HTMLDivElement>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
   const { trackEvent, trackSearch } = useAnalytics();
 
-  // Efek untuk melakukan pencarian setiap kali debouncedQuery berubah
+  // Efek untuk membersihkan state pencarian saat komponen unmount
+  useEffect(() => {
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, []);
+
+  // Fungsi untuk melakukan pencarian
+  const performSearch = async (searchQuery: string) => {
+    try {
+      // Batalkan request sebelumnya jika ada
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+
+      // Buat controller baru untuk request ini
+      abortControllerRef.current = new AbortController();
+
+      setIsLoading(true);
+      setError(null);
+
+      const res = await fetch(
+        `/api/spotify?q=${encodeURIComponent(searchQuery)}&type=track&limit=15`,
+        { signal: abortControllerRef.current.signal }
+      );
+
+      if (!res.ok) {
+        throw new Error('Failed to fetch');
+      }
+
+      const data = await res.json();
+
+      // Validasi data response
+      if (!data || !data.tracks || !Array.isArray(data.tracks.items)) {
+        throw new Error('Invalid response format');
+      }
+
+      // Filter dan validasi tracks
+      const validTracks = data.tracks.items.filter((track: Track) => {
+        return track && 
+               track.id &&
+               track.name &&
+               track.album &&
+               Array.isArray(track.album.images) &&
+               track.album.images.length > 0;
+      });
+
+      setResults(validTracks);
+      
+      // Track search analytics dalam try-catch terpisah
+      try {
+        trackSearch(searchQuery, validTracks.length);
+      } catch (analyticsError) {
+        console.error("Analytics error:", analyticsError);
+      }
+    } catch (err) {
+      if (err instanceof Error) {
+        if (err.name === 'AbortError') {
+          // Abaikan error abort karena ini normal saat membatalkan request
+          return;
+        }
+        setError(err.message);
+      }
+      setResults([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Effect untuk menangani pencarian
   useEffect(() => {
     if (debouncedQuery.trim() === '') {
       setResults([]);
+      setError(null);
       return;
     }
 
-    const fetchResults = async () => {
-      setIsLoading(true);
-      try {
-        const res = await fetch(`/api/spotify?q=${encodeURIComponent(debouncedQuery)}&type=track&limit=15`);
-        const data = await res.json();
-        const filteredResults = data?.tracks?.items.filter((track: Track) => track.album?.images?.length > 0) || [];
-        setResults(filteredResults);
-        
-        // Track search analytics
-        event({
-          action: 'search_music',
-          category: 'search',
-          label: debouncedQuery,
-          value: filteredResults.length
-        });
-        
-        // Track to analytics dashboard
-        trackSearch(debouncedQuery, filteredResults.length);
-      } catch (error) {
-        console.error("Gagal melakukan pencarian:", error);
-        setResults([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchResults();
-  }, [debouncedQuery, trackSearch]);
+    performSearch(debouncedQuery.trim());
+  }, [debouncedQuery]);
 
   // Efek untuk menutup dropdown saat klik di luar area pencarian
   useEffect(() => {
@@ -74,23 +121,25 @@ export default function SearchPage() {
   const showSuggestionsPanel = isFocused && query.length === 0;
 
   const handlePlaySong = (track: Track, tracks: Track[], index: number) => {
-    // Track to Google Analytics
-    event({
-      action: 'play_song',
-      category: 'music',
-      label: `${track.name} - ${track.artists?.[0]?.name || 'Unknown Artist'}`,
-      value: 1
-    });
-    
-    // Track to analytics dashboard
-    trackEvent('play_song', { 
-      song: `${track.name} - ${track.artists?.[0]?.name || 'Unknown Artist'}`,
-      source: 'search'
-    });
-    
-    // Play the song
-    playSong(track, tracks, index);
-    setIsFocused(false); // Tutup panel setelah memilih lagu
+    try {
+      // Track to analytics dashboard only if track is valid
+      if (track?.name) {
+        try {
+          trackEvent('play_song', { 
+            song: `${track.name} - ${track.artists?.[0]?.name || 'Unknown Artist'}`,
+            source: 'search'
+          });
+        } catch (analyticsError) {
+          console.error("Analytics error:", analyticsError);
+        }
+      }
+      
+      // Play the song
+      playSong(track, tracks, index);
+      setIsFocused(false); // Tutup panel setelah memilih lagu
+    } catch (error) {
+      console.error("Error playing song:", error);
+    }
   };
 
   return (
@@ -144,7 +193,11 @@ export default function SearchPage() {
                   {Array.from({ length: 5 }).map((_, i) => <TrackListSkeleton key={i} />)}
                 </div>
               ) : (
-                results.length > 0 ? (
+                error ? (
+                  <p className="text-red-400 text-center py-6 px-4">
+                    Terjadi kesalahan: {error}. Silakan coba lagi.
+                  </p>
+                ) : results.length > 0 ? (
                   <div className="space-y-1">
                     {results.map((track, index) => (
                       <TrackListItem
@@ -155,7 +208,9 @@ export default function SearchPage() {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-zinc-400 text-center py-6 px-4">Tidak ada hasil ditemukan untuk &quot;{query}&quot;.</p>
+                  <p className="text-zinc-400 text-center py-6 px-4">
+                    Tidak ada hasil ditemukan untuk &quot;{query}&quot;.
+                  </p>
                 )
               )
             )}

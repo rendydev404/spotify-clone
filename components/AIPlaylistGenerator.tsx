@@ -20,47 +20,86 @@ export default function AIPlaylistGenerator() {
 
   const handleGeneratePlaylist = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!prompt.trim() || isLoading) return;
+    
+    // Validasi input
+    const trimmedPrompt = prompt.trim();
+    if (!trimmedPrompt || isLoading) {
+      setError("Mohon masukkan deskripsi playlist yang diinginkan");
+      return;
+    }
 
+    // Reset state dan mulai loading
     setIsLoading(true);
     setError("");
+    
+    console.log("Memulai generate playlist dengan prompt:", trimmedPrompt);
 
     try {
+      // Step 1: Get AI-generated search query
       const geminiResponse = await fetch('/api/gemini', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt }),
       });
 
-      if (!geminiResponse.ok) throw new Error("Gagal mendapatkan respons dari AI.");
+      if (!geminiResponse.ok) {
+        const errorData = await geminiResponse.json();
+        throw new Error(errorData.error || "Gagal mendapatkan respons dari AI.");
+      }
 
       const geminiData = await geminiResponse.json();
-      const searchQuery = geminiData.query.trim().replace(/"/g, "");
+      if (!geminiData.query) {
+        throw new Error("AI tidak menghasilkan query yang valid.");
+      }
+
+      // Step 2: Search tracks using the generated query
+      const searchQuery = geminiData.query.trim().replace(/["']/g, "");
+      console.log("Generated search query:", searchQuery); // Untuk debugging
 
       const spotifyResponse = await fetch(`/api/spotify?type=search&q=${encodeURIComponent(searchQuery)}`);
-      if (!spotifyResponse.ok) throw new Error("Gagal mencari lagu di Spotify.");
+      if (!spotifyResponse.ok) {
+        const errorData = await spotifyResponse.json();
+        throw new Error(errorData.error || "Gagal mencari lagu di Spotify.");
+      }
       
       const spotifyData = await spotifyResponse.json();
       const tracks: Track[] = spotifyData?.tracks?.items || [];
-
-      if (tracks.length > 0) {
-        const newPlaylistName = `AI Playlist: ${prompt}`;
-        localStorage.setItem('my-playlist-name', newPlaylistName);
-        localStorage.setItem('my-playlist', JSON.stringify(tracks));
-        
-        playSong(tracks[0], tracks, 0);
-        router.push('/playlist');
-        setIsOpen(false);
-        trackPlaylistGeneration(prompt);
-      } else {
-        setError("Tidak ada lagu yang ditemukan untuk deskripsi itu.");
+      
+      if (!tracks.length) {
+        throw new Error("Tidak ada lagu yang cocok dengan kriteria tersebut.");
       }
 
+      // Jika ada tracks, buat playlist dan mainkan
+      const newPlaylistName = `AI Playlist: ${prompt}`;
+      localStorage.setItem('my-playlist-name', newPlaylistName);
+      localStorage.setItem('my-playlist', JSON.stringify(tracks));
+      
+      playSong(tracks[0], tracks, 0);
+      router.push('/playlist');
+      setIsOpen(false);
+      trackPlaylistGeneration(prompt);
+
     } catch (err) {
-      const errorMessage = (err instanceof Error) ? err.message : "Terjadi kesalahan tidak diketahui.";
-      setError(`Gagal membuat playlist: ${errorMessage}`);
+      console.error('Error detail:', err);
+      
+      let errorMessage = "Terjadi kesalahan tidak diketahui.";
+      
+      if (err instanceof Error) {
+        // Handle specific error messages
+        if (err.message.includes("AI")) {
+          errorMessage = "AI sedang mengalami gangguan. Silakan coba lagi dalam beberapa saat.";
+        } else if (err.message.includes("Spotify")) {
+          errorMessage = "Gagal mencari lagu. Mohon coba dengan kata kunci yang berbeda.";
+        } else if (err.message.includes("lagu yang cocok")) {
+          errorMessage = "Tidak menemukan lagu yang sesuai. Coba dengan deskripsi yang berbeda.";
+        } else {
+          errorMessage = err.message;
+        }
+      }
+      
+      setError(errorMessage);
       trackError(errorMessage);
-      console.error(err);
+      
     } finally {
       setIsLoading(false);
     }

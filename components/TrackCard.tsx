@@ -2,6 +2,7 @@
 import { Track } from "@/types";
 import { Play, Pause } from "lucide-react";
 import { event } from "./GoogleAnalytics";
+import { useRouter } from "next/navigation";
 
 interface TrackCardProps {
   track: Track;
@@ -9,7 +10,10 @@ interface TrackCardProps {
 }
 
 export default function TrackCard({ track, onPlay }: TrackCardProps) {
-  const handlePlay = () => {
+  const router = useRouter();
+
+  const handlePlay = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent navigation when clicking play button
     // Track play event
     event({
       action: 'play_song',
@@ -20,8 +24,22 @@ export default function TrackCard({ track, onPlay }: TrackCardProps) {
     onPlay();
   };
 
+  const handleCardClick = () => {
+    // Track navigation event
+    event({
+      action: 'navigate_to_track',
+      category: 'navigation',
+      label: `Navigated to track: ${track.name}`,
+      value: 1
+    });
+    router.push(`/track/${track.id}`);
+  };
+
   return (
-    <div className="bg-gray-800 rounded-lg p-4 hover:bg-gray-700 transition-colors group cursor-pointer">
+    <div 
+      className="bg-gray-800 rounded-lg p-4 hover:bg-gray-700 transition-colors group cursor-pointer"
+      onClick={handleCardClick}
+    >
       <div className="relative mb-4">
         <img
           src={track.album?.images?.[0]?.url || '/spotify-logo.png'}
