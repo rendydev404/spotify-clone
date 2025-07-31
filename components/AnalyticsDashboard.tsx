@@ -13,7 +13,8 @@ import {
   AlertTriangle,
   CheckCircle,
   Clock,
-  RefreshCw
+  RefreshCw,
+  Globe
 } from 'lucide-react';
 
 interface AnalyticsData {
@@ -25,6 +26,7 @@ interface AnalyticsData {
   profileClicks: number;
   errors: number;
   realTimeUsers: number;
+  totalVisitors: number; // Total pengunjung sepanjang masa
   topPages: Array<{ page: string; views: number }>;
   topEvents: Array<{ event: string; count: number }>;
   isRealData: boolean;
@@ -55,7 +57,7 @@ export default function AnalyticsDashboard() {
   useEffect(() => {
     fetchData();
     
-    // Auto-refresh setiap 30 detik
+    // Auto-refresh setiap 30 detik untuk real-time data
     const interval = setInterval(fetchData, 30000);
     
     // Listen for manual refresh event
@@ -159,6 +161,14 @@ export default function AnalyticsDashboard() {
       color: 'bg-red-500',
       bgColor: 'bg-red-500/10',
       borderColor: 'border-red-500/20'
+    },
+    {
+      label: 'Total Pengunjung',
+      value: data.totalVisitors,
+      icon: Globe,
+      color: 'bg-teal-500',
+      bgColor: 'bg-teal-500/10',
+      borderColor: 'border-teal-500/20'
     }
   ];
 

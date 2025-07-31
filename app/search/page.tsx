@@ -8,6 +8,7 @@ import TrackListItem from '@/components/TrackListItem';
 import { TrackListSkeleton } from '@/components/TrackCardSkeleton';
 import { useDebounce } from '@/hooks/useDebounce';
 import { event } from '@/components/GoogleAnalytics';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 const suggestedGenres = ["Pop", "Rock", "Indie", "Jazz", "Dangdut", "K-Pop", "Classical"];
 
@@ -20,6 +21,7 @@ export default function SearchPage() {
   const debouncedQuery = useDebounce(query, 400);
   const { playSong } = usePlayer();
   const searchContainerRef = useRef<HTMLDivElement>(null);
+  const { trackEvent, trackSearch } = useAnalytics();
 
   // Efek untuk melakukan pencarian setiap kali debouncedQuery berubah
   useEffect(() => {
@@ -43,6 +45,9 @@ export default function SearchPage() {
           label: debouncedQuery,
           value: filteredResults.length
         });
+        
+        // Track to analytics dashboard
+        trackSearch(debouncedQuery, filteredResults.length);
       } catch (error) {
         console.error("Gagal melakukan pencarian:", error);
         setResults([]);
@@ -52,7 +57,7 @@ export default function SearchPage() {
     };
 
     fetchResults();
-  }, [debouncedQuery]);
+  }, [debouncedQuery, trackSearch]);
 
   // Efek untuk menutup dropdown saat klik di luar area pencarian
   useEffect(() => {
@@ -67,6 +72,26 @@ export default function SearchPage() {
 
   const showResultsPanel = isFocused && query.length > 0;
   const showSuggestionsPanel = isFocused && query.length === 0;
+
+  const handlePlaySong = (track: Track, tracks: Track[], index: number) => {
+    // Track to Google Analytics
+    event({
+      action: 'play_song',
+      category: 'music',
+      label: `${track.name} - ${track.artists?.[0]?.name || 'Unknown Artist'}`,
+      value: 1
+    });
+    
+    // Track to analytics dashboard
+    trackEvent('play_song', { 
+      song: `${track.name} - ${track.artists?.[0]?.name || 'Unknown Artist'}`,
+      source: 'search'
+    });
+    
+    // Play the song
+    playSong(track, tracks, index);
+    setIsFocused(false); // Tutup panel setelah memilih lagu
+  };
 
   return (
     <main className="bg-zinc-900 text-white min-h-screen p-4 md:p-8">
@@ -125,10 +150,7 @@ export default function SearchPage() {
                       <TrackListItem
                         key={track.id}
                         track={track}
-                        onPlay={() => {
-                          playSong(track, results, index);
-                          setIsFocused(false); // Tutup panel setelah memilih lagu
-                        }}
+                        onPlay={() => handlePlaySong(track, results, index)}
                       />
                     ))}
                   </div>

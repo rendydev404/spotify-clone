@@ -16,7 +16,7 @@ export default function AIPlaylistGenerator() {
   const [error, setError] = useState("");
   const { playSong, activeTrack } = usePlayer();
   const router = useRouter();
-  const { trackPlaylistGeneration, trackButtonClick, trackError } = useAnalytics();
+  const { trackEvent, trackPlaylistGeneration, trackError } = useAnalytics();
 
   const handleGeneratePlaylist = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -51,7 +51,7 @@ export default function AIPlaylistGenerator() {
         playSong(tracks[0], tracks, 0);
         router.push('/playlist');
         setIsOpen(false);
-        trackPlaylistGeneration(prompt, tracks.length);
+        trackPlaylistGeneration(prompt);
       } else {
         setError("Tidak ada lagu yang ditemukan untuk deskripsi itu.");
       }
@@ -59,7 +59,7 @@ export default function AIPlaylistGenerator() {
     } catch (err) {
       const errorMessage = (err instanceof Error) ? err.message : "Terjadi kesalahan tidak diketahui.";
       setError(`Gagal membuat playlist: ${errorMessage}`);
-      trackError('playlist_generation', errorMessage);
+      trackError(errorMessage);
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -78,7 +78,7 @@ export default function AIPlaylistGenerator() {
         <motion.button 
           onClick={() => {
             setIsOpen(true);
-            trackButtonClick('ai_playlist', 'floating_button');
+            trackEvent('ai_playlist_button_click', { location: 'floating_button' });
           }}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}

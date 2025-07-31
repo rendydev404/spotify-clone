@@ -5,11 +5,12 @@ import TrackCard from "@/components/TrackCard";
 import { TrackCardSkeleton } from "@/components/TrackCardSkeleton";
 import { Track } from "@/types";
 import { usePlayer } from "@/app/context/PlayerContext";
-import { Music, Search, Smartphone, Play, Brain } from "lucide-react";
+import { Music, Search, Smartphone, Play, Sparkles } from "lucide-react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { event } from "@/components/GoogleAnalytics";
+import { useAnalytics } from "@/hooks/useAnalytics";
 
 const shuffleArray = (array: Track[]): Track[] => {
   let currentIndex = array.length,  randomIndex;
@@ -27,6 +28,7 @@ export default function HomePage() {
   const { playSong } = usePlayer();
   const router = useRouter();
   const songCardsRef = useRef<HTMLElement>(null);
+  const { trackEvent, trackPlaySong } = useAnalytics();
 
   useEffect(() => {
     const getDiscoverTracks = async () => {
@@ -48,6 +50,9 @@ export default function HomePage() {
           label: 'Homepage loaded successfully',
           value: validTracks.length
         });
+        
+        // Track to analytics dashboard
+        trackEvent('homepage_loaded', { tracksCount: validTracks.length });
       } catch (error) {
         console.error("Gagal mengambil lagu rekomendasi:", error);
       } finally {
@@ -55,7 +60,7 @@ export default function HomePage() {
       }
     };
     getDiscoverTracks();
-  }, []);
+  }, [trackEvent]);
 
   const scrollToSongCards = () => {
     songCardsRef.current?.scrollIntoView({ 
@@ -70,6 +75,9 @@ export default function HomePage() {
       label: 'User scrolled to song cards',
       value: 1
     });
+    
+    // Track to analytics dashboard
+    trackEvent('scroll_to_songs');
   };
 
   const navigateToSearch = () => {
@@ -81,7 +89,26 @@ export default function HomePage() {
       value: 1
     });
     
+    // Track to analytics dashboard
+    trackEvent('navigate_to_search');
+    
     router.push('/search');
+  };
+
+  const handlePlaySong = (track: Track, tracks: Track[], index: number) => {
+    // Track to Google Analytics
+    event({
+      action: 'play_song',
+      category: 'music',
+      label: `${track.name} - ${track.artists?.[0]?.name || 'Unknown Artist'}`,
+      value: 1
+    });
+    
+    // Track to analytics dashboard
+    trackPlaySong(`${track.name} - ${track.artists?.[0]?.name || 'Unknown Artist'}`);
+    
+    // Play the song
+    playSong(track, tracks, index);
   };
 
   const TracksGrid = ({ tracks }: { tracks: Track[] }) => (
@@ -90,7 +117,7 @@ export default function HomePage() {
         <TrackCard
           key={`${track.id}-${index}`}
           track={track}
-          onPlay={() => playSong(track, tracks, index)}
+          onPlay={() => handlePlaySong(track, tracks, index)}
         />
       ))}
     </div>
@@ -111,7 +138,7 @@ export default function HomePage() {
     {
       title: "AI Playlist Generator",
       description: "Buat playlist otomatis dengan AI canggih. Cukup berikan deskripsi, AI akan membuat playlist sesuai mood.",
-      icon: Brain,
+      icon: Sparkles,
     },
     {
       title: "Search Musik Cepat",

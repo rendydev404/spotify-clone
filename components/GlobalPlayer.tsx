@@ -18,7 +18,7 @@ export default function GlobalPlayer() {
     activeTrack, isPlaying, isLoading, progress, duration, openNowPlayingView,
     togglePlayPause, seek, playNext, playPrevious, repeatMode, toggleRepeatMode
   } = usePlayer();
-  const { trackMusicPlay } = useAnalytics();
+  const { trackPlaySong } = useAnalytics();
 
   if (!activeTrack) return null;
   const imageUrl = activeTrack.album.images?.[0]?.url;
@@ -32,7 +32,7 @@ export default function GlobalPlayer() {
   };
 
   return (
-    <div onClick={openNowPlayingView} className="fixed bottom-16 md:bottom-0 left-0 right-0 h-20 bg-surface border-t border-white/10 text-text-primary flex items-center px-4 z-40 cursor-pointer md:cursor-default">
+    <div onClick={openNowPlayingView} className="bg-zinc-900 fixed bottom-16 md:bottom-0 left-0 right-0 h-20 bg-surface border-t border-white/10 text-text-primary flex items-center px-4 z-40 cursor-pointer md:cursor-default">
       <div className="w-full flex items-center justify-between md:justify-center">
         {/* Info Lagu */}
         <div className="flex items-center gap-3 w-full md:w-1/4 md:justify-start pointer-events-auto">
@@ -51,7 +51,7 @@ export default function GlobalPlayer() {
                 <button onClick={(e) => { 
                   e.stopPropagation(); 
                   if (!isPlaying && activeTrack) {
-                    trackMusicPlay(activeTrack.name, activeTrack.artists.map(a => a.name).join(', '), 'spotify');
+                    trackPlaySong(activeTrack.name);
                   }
                   togglePlayPause(); 
                  }} className="bg-text-primary text-white bg-primary rounded-full p-2 hover:scale-105">{isLoading ? <LoaderCircle size={24} className="animate-spin" /> : isPlaying ? <Pause size={24} className="fill-current" /> : <Play size={24} className="fill-current ml-1" />}</button>
@@ -78,7 +78,7 @@ export default function GlobalPlayer() {
              <button onClick={(e) => { 
                e.stopPropagation(); 
                if (!isPlaying && activeTrack) {
-                 trackMusicPlay(activeTrack.name, activeTrack.artists.map(a => a.name).join(', '), 'spotify');
+                 trackPlaySong(activeTrack.name);
                }
                togglePlayPause(); 
              }} className="p-2">{isPlaying ? <Pause size={32} className="fill-current text-white bg-primary rounded-full p-2"/> : <Play size={32} className="fill-current text-white bg-primary rounded-full p-2"/>}</button>
